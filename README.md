@@ -1,56 +1,35 @@
-# Welcome to your Expo app 👋
+# Nutrition App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+---
 
-## Get started
+## Project Overview
 
-1. Install dependencies
+This is a nutrition app that I have wanted to build for quite some time. The large overarching goal is to be able to take user input either as an image or through manual inputs of nutritional values and to return on the screen the goals that user has set, how far they are through that goal and more QOL trackers to help people and myself who struggle with tracking their nutrition.
 
-   ```bash
-   npm install
-   ```
+Another reason I wanted to start this project is to introduce myself into the world of real applicable app coding and building. The courses that I take have felt repetitive and boring, so this is a way to learn something new about an industry that I have a lot of interest in.
 
-2. Start the app
+The way I have approached this project is more to understand the functionality than to actually build it myself. Using LLM's I have learnt how to download tech Stacks, use their commands, connect files to one another and learn the importance of certain blocks.
 
-   ```bash
-   npx expo start
-   ```
+---
 
-In the output, you'll find options to open the app in a
+## Tech Stack
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+![React Native](https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Expo](https://img.shields.io/badge/Expo-000020?style=for-the-badge&logo=expo&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Node](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
 
-You can start developing by editing the files inside the **src/app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+---
 
-## Get a fresh project
+## Current Progress
 
-When you're ready, run:
+### November 4th 2026
 
-```bash
-npm run reset-project
-```
+**Created**
+- Initialized the Project
+- Opened the expo template and searched around the downloaded files. Started early implementation of nutrition calculations, inputs and user outputs.
+- Created the index tsx, nutrition input, and nutriton utils
 
-This command will move the starter code to the **example** directory and create a blank **src/app** directory where you can start developing.
-
-### Other setup steps
-
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+**Learned**
+- How tech stacks work and the importance of their implementation when coding.
+- how to setup the tech stacks, specifically Expo, Node and TypeScript. While what ive learnt is quite basic. It is still fundemenatal for future development.
