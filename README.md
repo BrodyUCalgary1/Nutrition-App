@@ -21,29 +21,4 @@ The way I have approached this project is more to understand the functionality t
 
 ---
 
-## Current Progress
 
-### November 4th 2026
-
-**Created**
-- Initialized the Project
-- Opened the expo template and searched around the downloaded files. Started early implementation of nutrition calculations, inputs and user outputs.
-- Created the index tsx, nutrition input, and nutriton utils
-
-**Learned**
-- How tech stacks work and the importance of their implementation when coding.
-- how to setup the tech stacks, specifically Expo, Node and TypeScript. While what ive learnt is quite basic. It is still fundemenatal for future development.
-
----
-### November 5th 2026
-
-**Created**
-- Implementation of multiple food saves. Instead of only being able to update one food at a time the program now allows users to input multiple food values and change the goals accordingly.
-- Created Nutrition Goals to keep track of those inputs and how to return it. Built by Copying Nutrition Inputs and changing the variables
-to how I see fit
-
-**Learned**
--   How to troubleshoot expo and how to use it on my phone to load the program remotly
-- Learnt a little about the functionality of onsave, setState and usestate
-- How to use some basic JS methods such as .map and .reduce
-- Learnt how to format a README haha

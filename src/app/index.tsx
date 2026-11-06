@@ -81,8 +81,22 @@ const proteinPercentage = goals
           <Text>Calorie Goal: {goals.calorieGoal}</Text>
           <Text>Protein Goal: {goals.proteinGoal}g</Text>
 
-          <Text>Remaining Calories: {remainingCalories}</Text>
-          <Text>Remaining Protein: {remainingProtein}g</Text>
+          {remainingCalories !== null && remainingCalories > 0 ? (
+            <Text>Remaining Calories: {remainingCalories}</Text>
+          ) : remainingCalories !== null && remainingCalories <= 0 ? (
+           <Text>Over goal by: {Math.abs(remainingCalories)} calories</Text>
+          ) : (
+           <Text>Calorie goal reached!</Text>
+          )}
+
+
+          {remainingProtein !== null && remainingProtein > 0 ? (
+            <Text>Remaining Protein: {remainingProtein}</Text>
+          ) : remainingProtein !== null && remainingProtein <= 0 ? (
+           <Text>Over goal by: {Math.abs(remainingProtein)} calories</Text>
+          ) : (
+           <Text>Protein goal reached!</Text>
+          )}
 
           <Text>Calorie Goal Completed: {caloriePercentage.toFixed(1)}%</Text>
           <Text>Protein Goal Completed: {proteinPercentage.toFixed(1)}%</Text>

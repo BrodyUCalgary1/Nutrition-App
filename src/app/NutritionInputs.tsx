@@ -5,7 +5,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  View,
+  View
 } from 'react-native';
 
 // Define what data this component will send to other files
@@ -27,9 +27,27 @@ export default function NutritionInputs({ onSave }: Props) {
   const [name, setName] = useState('');
   const [calories, setCalories] = useState('');
   const [protein, setProtein] = useState('');
+  const [error, setError] = useState('');
 
   // Send the collected information to the parent component
   function handleSubmit() {
+    if (!name.trim() || calories.trim() === '' || protein.trim() === '') {
+      setError('Please fill in all fields.');
+      return;
+    }
+    if( !Number.isFinite(Number(calories))||!Number.isFinite(Number(protein))){
+      setError('Please enter a number')
+      return;
+    }
+    if( Number(calories) <= 0|| Number(protein) <= 0){
+      setError('Please enter non-negative numbers and non-Zero')
+      return;
+    }
+    
+
+
+  setError('');
+
     onSave({
       name,
       calories: Number(calories),
@@ -69,6 +87,7 @@ export default function NutritionInputs({ onSave }: Props) {
         onChangeText={setProtein}
       />
 
+      {error !== '' && <Text style={{ color: 'red' }}>{error}</Text>}
 
 
       <Pressable style={styles.button} onPress={handleSubmit}>
