@@ -1,25 +1,24 @@
 
 import { useState } from 'react';
 import {
-    Pressable,
-    StyleSheet,
-    Text,
-    TextInput,
-    View,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from 'react-native';
 
 // Define what data this component will send to other files
-type NutritionData = {
+export type NutritionEntry = {
   name: string;
   calories: number;
   protein: number;
-  calorieGoal: number;
-  proteinGoal: number;
 };
+
 
 // Define the component's properties
 type Props = {
-  onSave: (data: NutritionData) => void;
+  onSave: (data: NutritionEntry) => void;
 };
 
 export default function NutritionInputs({ onSave }: Props) {
@@ -28,8 +27,6 @@ export default function NutritionInputs({ onSave }: Props) {
   const [name, setName] = useState('');
   const [calories, setCalories] = useState('');
   const [protein, setProtein] = useState('');
-  const [calorieGoal, setCalorieGoal] = useState('');
-  const [proteinGoal, setProteinGoal] = useState('');
 
   // Send the collected information to the parent component
   function handleSubmit() {
@@ -37,9 +34,11 @@ export default function NutritionInputs({ onSave }: Props) {
       name,
       calories: Number(calories),
       protein: Number(protein),
-      calorieGoal: Number(calorieGoal),
-      proteinGoal: Number(proteinGoal),
     });
+
+    setName('');
+    setCalories('');
+    setProtein('');
   }
 
   return (
@@ -70,23 +69,7 @@ export default function NutritionInputs({ onSave }: Props) {
         onChangeText={setProtein}
       />
 
-      <Text style={styles.heading}>Daily Goals</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Calorie goal"
-        keyboardType="numeric"
-        value={calorieGoal}
-        onChangeText={setCalorieGoal}
-      />
-
-      <TextInput
-        style={styles.input}
-        placeholder="Protein goal (g)"
-        keyboardType="numeric"
-        value={proteinGoal}
-        onChangeText={setProteinGoal}
-      />
 
       <Pressable style={styles.button} onPress={handleSubmit}>
         <Text style={styles.buttonText}>Save Information</Text>
@@ -95,6 +78,11 @@ export default function NutritionInputs({ onSave }: Props) {
     </View>
   );
 }
+
+
+
+
+
 
 const styles = StyleSheet.create({
   container: {

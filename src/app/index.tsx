@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import NutritionInputs from './NutritionInputs';
+import NutritionGoals, { NutritionGoal } from './NutritionGoals';
+import NutritionInputs, { NutritionEntry } from './NutritionInputs';
 import {
   calculateCaloriePercentage,
   calculateProteinPercentage,
@@ -8,85 +9,91 @@ import {
   calculateRemainingProtein,
 } from './NutritionUtils';
 
-// Define the structure of our nutrition data
-type NutritionData = {
-  name: string;
-  calories: number;
-  protein: number;
-  calorieGoal: number;
-  proteinGoal: number;
-};
 
 export default function HomeScreen() {
 
   // Store the information received from NutritionInputs
-  const [nutrition, setNutrition] = useState<NutritionData | null>(null);
+  const [goals, setGoals] = useState<NutritionGoal | null>(null);
+  const [foods, setFoods] = useState<NutritionEntry[]>([]);
 
-  const remainingCalories = nutrition
-  ? calculateRemainingCalories(
-      nutrition.calorieGoal,
-      nutrition.calories
-    )
+  let totalCalories = foods.reduce((total, currentItem) => {
+  return total + currentItem.calories;
+  }, 0);
+
+let totalProteins = foods.reduce((total, currentItem) => {
+  return total + currentItem.protein;
+}, 0);
+
+
+  const remainingCalories = goals
+  ? calculateRemainingCalories(goals.calorieGoal, totalCalories)
   : null;
 
-const remainingProtein = nutrition
-  ? calculateRemainingProtein(
-      nutrition.proteinGoal,
-      nutrition.protein
-    )
+const remainingProtein = goals
+  ? calculateRemainingProtein(goals.proteinGoal, totalProteins)
   : null;
 
-const caloriePercentage = nutrition
-  ? calculateCaloriePercentage(
-      nutrition.calorieGoal,
-      nutrition.calories
-    )
+const caloriePercentage = goals
+  ? calculateCaloriePercentage(goals.calorieGoal, totalCalories)
   : 0;
 
-const proteinPercentage = nutrition
-  ? calculateProteinPercentage(
-      nutrition.proteinGoal,
-      nutrition.protein
-    )
+const proteinPercentage = goals
+  ? calculateProteinPercentage(goals.proteinGoal, totalProteins)
   : 0;
 
   return (
-    <ScrollView>
-      <View style={styles.container}>
+  <ScrollView>
+    <View style={styles.container}>
 
-        <Text style={styles.title}>My Nutrition App</Text>
+      <Text style={styles.title}>My Nutrition App</Text>
 
-        {/* Our separate input component */}
-        <NutritionInputs
-          onSave={(data) => setNutrition(data)}
-        />
+      <NutritionInputs
+        onSave={(data) => setFoods((previousFoods) => [...previousFoods, data])}
+      />
+      <NutritionGoals
+        onSave={(data) => setGoals(data)}
+      />
 
-        {/* Display the information received */}
-        {nutrition !== null && (
-          <View style={styles.results}>
-            <Text style={styles.heading}>Saved Information</Text>
 
-            <Text>Food: {nutrition.name}</Text>
-            <Text>Calories: {nutrition.calories}</Text>
-            <Text>Protein: {nutrition.protein}g</Text>
+      {/* Display saved foods */}
+      {foods.length > 0 && (
+        <View style={styles.results}>
+          <Text style={styles.heading}>Saved Foods</Text>
 
-            <Text style={styles.heading}>Daily Goals</Text>
+          {foods.map((food, index) => (
+            <View key={index}>
+              <Text>Food: {food.name}</Text>
+              <Text>Calories: {food.calories}</Text>
+              <Text>Protein: {food.protein}g</Text>
+            </View>
+          ))}
 
-            <Text>Calorie Goal: {nutrition.calorieGoal}</Text>
-            <Text>Protein Goal: {nutrition.proteinGoal}g</Text>
-            <Text>Remaining Calories: {remainingCalories}</Text>
-            <Text>Remaining Protein: {remainingProtein}g</Text>
+          <Text>Total Calories: {totalCalories}</Text>
+          <Text>Total Protein: {totalProteins}g</Text>
+        </View>
+      )}
 
-            <Text>Calorie Goal Completed: {caloriePercentage.toFixed(1)}%</Text>
-            <Text>Protein Goal Completed: {proteinPercentage.toFixed(1)}%</Text>
-          </View>
-        )}
+      {/* Display daily goals */}
+      {goals !== null && (
+        <View style={styles.results}>
+          <Text style={styles.heading}>Daily Goals</Text>
 
-      </View>
-    </ScrollView>
-  );
+          <Text>Calorie Goal: {goals.calorieGoal}</Text>
+          <Text>Protein Goal: {goals.proteinGoal}g</Text>
+
+          <Text>Remaining Calories: {remainingCalories}</Text>
+          <Text>Remaining Protein: {remainingProtein}g</Text>
+
+          <Text>Calorie Goal Completed: {caloriePercentage.toFixed(1)}%</Text>
+          <Text>Protein Goal Completed: {proteinPercentage.toFixed(1)}%</Text>
+        </View>
+      )}
+
+    </View>
+  </ScrollView>
+);  
 }
-
+  
 const styles = StyleSheet.create({
   container: {
     padding: 20,
