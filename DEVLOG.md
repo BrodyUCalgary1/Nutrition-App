@@ -34,3 +34,17 @@ to how I see fit
 - Learnt that usestate can be used for more that just user input, but also error messages, loading and etc
 - Understanding the Code a lot more. Specifically how handleSubmit works and how the error messages fit in to the code.
 - Starting to use AI less as a tool that builds 100% of the project and getting more hands on after starting to understand typescipt more and more.
+
+---
+### November 6/7th 2026
+
+**Created**
+- Each food now is able to deleted and edited
+- Async Storage for data saves
+- Created UseEffect to stop data from being overridden if it hasnt been fully loaded yet.
+
+**Learned**
+- Understanding of Typescript is growing. Learning => method 
+- Starting to understand how each block works individually and how it adds to the total compinent of the game
+- Learnt how to use Async functions, specifically await and asyc
+- Why JSON data is important and how to parse it and stringify data.

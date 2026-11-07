@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect, useState } from 'react';
+import { Button, ScrollView, StyleSheet, Text, View } from 'react-native';
 import NutritionGoals, { NutritionGoal } from './NutritionGoals';
 import NutritionInputs, { NutritionEntry } from './NutritionInputs';
 import {
@@ -15,6 +16,66 @@ export default function HomeScreen() {
   // Store the information received from NutritionInputs
   const [goals, setGoals] = useState<NutritionGoal | null>(null);
   const [foods, setFoods] = useState<NutritionEntry[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false); //stops us from loading empty data sets if the code hasnt finsihed running yet
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+
+
+  useEffect(() => {
+  async function loadData() {//async function to load data like food and goals
+    try {
+      const storedFoods = await AsyncStorage.getItem('foods');
+      const storedGoals = await AsyncStorage.getItem('goals');
+
+      if (storedFoods !== null) {
+        setFoods(JSON.parse(storedFoods));
+      }
+
+      if (storedGoals !== null) {
+        setGoals(JSON.parse(storedGoals));
+      }
+    } catch (error) {
+      console.log('Error loading data:', error);
+    } finally {
+      setIsLoaded(true);
+    }
+  }
+
+  loadData();
+}, []);
+
+  useEffect(() => {
+  if (!isLoaded) return;//another async function however, this runs everytime foods, goals or loaded changes
+
+  async function saveData() {
+    try {
+      await AsyncStorage.setItem('foods', JSON.stringify(foods));
+      await AsyncStorage.setItem('goals', JSON.stringify(goals));
+    } catch (error) {
+      console.log('Error saving data:', error);
+    }
+  }
+
+  saveData();
+}, [foods, goals, isLoaded]);
+
+
+function deleteFood(indexToDelete: number) {
+  setFoods((currentFoods) =>
+    currentFoods.filter((food, index) => index !== indexToDelete)
+  );
+}
+function editFood(indexToEdit: number, updatedFood: NutritionEntry) {
+   const newFoods = foods.map((food, index) => {
+  if (index === indexToEdit) {
+    return updatedFood
+
+  }
+
+  return food;
+  });
+  setFoods(newFoods)
+}
+
 
   let totalCalories = foods.reduce((total, currentItem) => {
   return total + currentItem.calories;
@@ -48,8 +109,17 @@ const proteinPercentage = goals
       <Text style={styles.title}>My Nutrition App</Text>
 
       <NutritionInputs
-        onSave={(data) => setFoods((previousFoods) => [...previousFoods, data])}
-      />
+         initialData={editingIndex !== null ? foods[editingIndex] : undefined}
+          onCancel={() => setEditingIndex(null)}
+          onSave={(data) => {
+          if (editingIndex !== null) {
+              editFood(editingIndex, data);
+              setEditingIndex(null);
+          } else {
+              setFoods((previousFoods) => [...previousFoods, data]);
+          }
+          }}
+        />
       <NutritionGoals
         onSave={(data) => setGoals(data)}
       />
@@ -65,6 +135,15 @@ const proteinPercentage = goals
               <Text>Food: {food.name}</Text>
               <Text>Calories: {food.calories}</Text>
               <Text>Protein: {food.protein}g</Text>
+              <Button
+                title="Delete"
+                onPress={() =>deleteFood(index)}
+              />
+              <Button
+              title="Edit"
+              onPress={() => setEditingIndex(index)}
+                />
+
             </View>
           ))}
 
