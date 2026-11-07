@@ -48,3 +48,4 @@ to how I see fit
 - Starting to understand how each block works individually and how it adds to the total compinent of the game
 - Learnt how to use Async functions, specifically await and asyc
 - Why JSON data is important and how to parse it and stringify data.
+- Learnt Try/Catch method to help with errors in async.
