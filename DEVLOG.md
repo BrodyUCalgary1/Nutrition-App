@@ -49,3 +49,19 @@ to how I see fit
 - Learnt how to use Async functions, specifically await and asyc
 - Why JSON data is important and how to parse it and stringify data.
 - Learnt Try/Catch method to help with errors in async.
+
+---
+### November 8th 2026
+
+**Created**
+- Program now tracks daily food and alltime foods seperatly
+- Created a search bar that allows you to add the searched item into your daily foods. It searches from alltime foods. Items can be removed from this list
+- uses UUID and dates to seperate each food 
+- the output should now only show todays foods
+- Changed the visuals so that the text changes with the users colorscheme
+
+**Learned**
+- learnt a little about the crypto function and its implementation with UUID
+- using the dates as a method to sort from todays list from yesterdays or the days before
+- Learnt the usage of colorschems and the expo method for it. As well as its implementation in the code to dynamically update the visuals
+- I learnt that I HATE styling. AI can take over there.

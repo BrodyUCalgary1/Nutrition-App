@@ -1,11 +1,12 @@
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Pressable,
   StyleSheet,
   Text,
   TextInput,
-  View
+  View,
+  useColorScheme
 } from 'react-native';
 
 // Define what data this component will send to other files
@@ -55,14 +56,28 @@ export default function NutritionGoals({ onSave }: Props) {
     setCaloriesGoal('');
     setProteinGoal('');
   }
+  const colorScheme = useColorScheme();
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    setIsDarkMode(colorScheme === 'dark');
+  } , [colorScheme]);
+
+const headingStyle = isDarkMode
+  ? styles.darkHeading
+  : styles.lightHeading;
+const inputStyle = isDarkMode
+    ? styles.darkInput
+    : styles.lightInput;
+
 
   return (
     <View style={styles.container}>
 
-      <Text style={styles.heading}>Nutrition Goals</Text>
+      <Text style={headingStyle}>Nutrition Goals</Text>
 
       <TextInput
-        style={styles.input}
+        style={inputStyle}
         placeholder="Calorie Goal"
         keyboardType="numeric"
         value={calorieGoal}
@@ -71,7 +86,7 @@ export default function NutritionGoals({ onSave }: Props) {
 
 
       <TextInput
-        style={styles.input}
+        style={inputStyle}
         placeholder="Protein Goal (g)"
         keyboardType="numeric"
         value={proteinGoal}
@@ -98,17 +113,31 @@ const styles = StyleSheet.create({
     padding: 20,
     gap: 12,
   },
-  heading: {
+  lightHeading: {
     fontSize: 20,
     fontWeight: 'bold',
     marginTop: 10,
   },
-  input: {
+  darkHeading: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginTop: 10,
+    color: "white",
+  },
+  lightInput: {
     borderWidth: 1,
     borderColor: '#cccccc',
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
+  },
+  darkInput: {
+    borderWidth: 1,
+    borderColor: '#cccccc',
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 16,
+    color: "white",
   },
   button: {
     backgroundColor: '#2563eb',

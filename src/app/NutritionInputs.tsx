@@ -5,14 +5,25 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  View
+  View,
+  useColorScheme
 } from 'react-native';
 
-// Define what data this component will send to other files
+// Define what the food will send to other files
 export type NutritionEntry = {
   name: string;
   calories: number;
   protein: number;
+  
+};
+//saved foods that are stored in the library with an id
+export type SavedFood = NutritionEntry & {
+  id: string;
+};
+
+export type DailyFoods = NutritionEntry & {
+  id:string;
+  date:string;
 };
 
 
@@ -76,23 +87,37 @@ export default function NutritionInputs({ onSave, initialData, onCancel }: Props
     setCalories('');
     setProtein('');
   }
+  const colorScheme = useColorScheme();
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    setIsDarkMode(colorScheme === 'dark');
+  } , [colorScheme]);
+
+  const headingStyle = isDarkMode
+    ? styles.darkHeading
+    : styles.lightHeading;
+  const inputStyle = isDarkMode
+    ? styles.darkInput
+    : styles.lightInput;
+
 
   return (
     <View style={styles.container}>
 
-      <Text style={styles.heading}>
+      <Text style={headingStyle}>
         {initialData ? 'Edit Food' : 'Nutrition Information'}
       </Text>
 
       <TextInput
-        style={styles.input}
+        style={inputStyle}
         placeholder="Food name"
         value={name}
         onChangeText={setName}
       />
 
       <TextInput
-        style={styles.input}
+        style={inputStyle}
         placeholder="Calories"
         keyboardType="numeric"
         value={calories}
@@ -100,7 +125,7 @@ export default function NutritionInputs({ onSave, initialData, onCancel }: Props
       />
 
       <TextInput
-        style={styles.input}
+        style={inputStyle}
         placeholder="Protein (g)"
         keyboardType="numeric"
         value={protein}
@@ -138,17 +163,31 @@ const styles = StyleSheet.create({
     padding: 20,
     gap: 12,
   },
-  heading: {
+  lightHeading: {
     fontSize: 20,
     fontWeight: 'bold',
     marginTop: 10,
   },
-  input: {
+  darkHeading: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginTop: 10,
+    color: "white",
+  },
+  lightInput: {
     borderWidth: 1,
     borderColor: '#cccccc',
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
+  },
+  darkInput: {
+    borderWidth: 1,
+    borderColor: '#cccccc',
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 16,
+    color: "white",
   },
   button: {
     backgroundColor: '#2563eb',
