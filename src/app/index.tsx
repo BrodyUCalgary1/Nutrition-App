@@ -2,20 +2,22 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Crypto from "expo-crypto";
 import { useEffect, useState } from "react";
 import {
-  Button,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   View,
   useColorScheme,
 } from "react-native";
+import DailyFoodList from "./DailyFoodsList";
+import DateNavigation from "./DateNavigation";
+import FoodLibrary from "./FoodLibrary";
 import NutritionGoals, { NutritionGoal } from "./NutritionGoals";
 import NutritionInputs, {
   DailyFoods,
   NutritionEntry,
   SavedFood,
 } from "./NutritionInputs";
+import NutritionSummary from "./NutritionSummary";
 import {
   calculateCaloriePercentage,
   calculateProteinPercentage,
@@ -39,7 +41,8 @@ export default function HomeScreen() {
   const [isLoaded, setIsLoaded] = useState(false); //stops us from loading empty data sets if the code hasnt finsihed running yet
   const [editingIndex, setEditingIndex] = useState<number | null>(null); //index for the food we want to edit
   const [searchQuery, setSearchQuery] = useState(""); //saving whats in the search bar for saved foods
-  const [selectedDate, setSelectedDate] = useState(getLocalDateString()); //select which day it is and see what you entered
+  const [selectedDate, setSelectedDate] = useState(""); //select which day it is and see what you entered
+  const [isSearchFocused, setIsSearchFocused] = useState(false); //search focus for the search bar
 
   useEffect(() => {
     async function loadData() {
@@ -85,6 +88,10 @@ export default function HomeScreen() {
     saveData();
   }, [foods, goals, isLoaded, savedFoods]);
 
+  useEffect(() => {
+    setSelectedDate(getLocalDateString());
+  }, []);
+
   function deleteFood(indexToDelete: number) {
     setFoods((currentFoods) =>
       currentFoods.filter((food, index) => index !== indexToDelete),
@@ -112,7 +119,9 @@ export default function HomeScreen() {
 
   const today = getLocalDateString();
 
-  const todaysFoods = foods.filter((food) => food.date === selectedDate);
+  const selectedDaysFoods = foods.filter((food) => food.date === selectedDate);
+
+  const isToday = selectedDate === today;
 
   function changeDate(days: number) {
     const date = new Date(selectedDate + "T12:00:00");
@@ -121,11 +130,11 @@ export default function HomeScreen() {
     setSelectedDate(getLocalDateString(date));
   }
 
-  let totalCalories = todaysFoods.reduce((total, currentItem) => {
+  const totalCalories = selectedDaysFoods.reduce((total, currentItem) => {
     return total + currentItem.calories;
   }, 0);
 
-  let totalProteins = todaysFoods.reduce((total, currentItem) => {
+  const totalProteins = selectedDaysFoods.reduce((total, currentItem) => {
     return total + currentItem.protein;
   }, 0);
 
@@ -213,153 +222,63 @@ export default function HomeScreen() {
           }}
         />
 
-        <TextInput
-          style={[
-            styles.searchInput,
-            isDarkMode ? styles.darkInput : styles.lightInput,
-          ]}
-          placeholder="Search previous foods..."
-          placeholderTextColor={isDarkMode ? "#aaaaaa" : "#777777"}
-          value={searchQuery}
-          onChangeText={setSearchQuery}
+        <FoodLibrary
+          filteredFoods={filteredFoods}
+          searchQuery={searchQuery}
+          isSearchFocused={isSearchFocused}
+          isDarkMode={isDarkMode}
+          onSearchChange={setSearchQuery}
+          onSearchFocus={() => setIsSearchFocused(true)}
+          onSearchBlur={() => setIsSearchFocused(false)}
+          onAddFood={(food) => {
+            setFoods((previousFoods) => [
+              ...previousFoods,
+              {
+                ...food,
+                id: Crypto.randomUUID(),
+                date: getLocalDateString(),
+              },
+            ]);
+          }}
+          onDeleteFood={deleteSavedFood}
         />
-
-        {filteredFoods.map((food) => (
-          <View
-            key={food.id}
-            style={[
-              styles.foodItem,
-              isDarkMode ? styles.darkCard : styles.lightCard,
-            ]}
-          >
-            <View style={styles.foodInfo}>
-              <Text style={[styles.foodName, textStyle]}>{food.name}</Text>
-
-              <Text style={textStyle}>
-                {food.calories} calories · {food.protein}g protein
-              </Text>
-            </View>
-
-            <Button
-              title="Add"
-              onPress={() => {
-                setFoods((previousFoods) => [
-                  ...previousFoods,
-                  {
-                    ...food,
-                    id: Crypto.randomUUID(),
-                    date: getLocalDateString(),
-                  },
-                ]);
-              }}
-            />
-
-            <Button
-              title="Delete"
-              color="red"
-              onPress={() => deleteSavedFood(food.id)}
-            />
-          </View>
-        ))}
 
         <NutritionGoals onSave={(data) => setGoals(data)} />
 
-        {/* Display today's foods */}
-        {todaysFoods.length > 0 && (
-          <View
-            style={[
-              styles.results,
-              isDarkMode ? styles.darkCard : styles.lightCard,
-            ]}
-          >
-            <Text style={[styles.heading, textStyle]}>Today's Foods</Text>
-
-            {todaysFoods.map((food, index) => (
-              <View key={food.id} style={styles.dailyFood}>
-                <Text style={textStyle}>Food: {food.name}</Text>
-                <Text style={textStyle}>Calories: {food.calories}</Text>
-                <Text style={textStyle}>Protein: {food.protein}g</Text>
-
-                <Button
-                  title="Delete"
-                  onPress={() =>
-                    deleteFood(foods.findIndex((item) => item.id === food.id))
-                  }
-                />
-
-                <Button
-                  title="Edit"
-                  onPress={() =>
-                    setEditingIndex(
-                      foods.findIndex((item) => item.id === food.id),
-                    )
-                  }
-                />
-              </View>
-            ))}
-
-            <Text style={textStyle}>Total Calories: {totalCalories}</Text>
-
-            <Text style={textStyle}>Total Protein: {totalProteins}g</Text>
-          </View>
-        )}
-
         {/*Display Todays Date and Navigate*/}
-        <View style={styles.dateNavigation}>
-          <Button title="Previous Day" onPress={() => changeDate(-1)} />
+        <DateNavigation
+          selectedDate={selectedDate}
+          changeDate={changeDate}
+          isToday={isToday}
+          textStyle={textStyle}
+        />
 
-          <Text style={textStyle}>{selectedDate}</Text>
-
-          <Button title="Next Day" onPress={() => changeDate(1)} />
-        </View>
-
+        {/* Display today's foods */}
+        <DailyFoodList
+          foods={selectedDaysFoods}
+          textStyle={textStyle}
+          isDarkMode={isDarkMode}
+          onDelete={(id) => {
+            setFoods((currentFoods) =>
+              currentFoods.filter((food) => food.id !== id),
+            );
+          }}
+          onEdit={(id) => {
+            setEditingIndex(foods.findIndex((food) => food.id === id));
+          }}
+        />
         {/* Display daily goals */}
-        {goals !== null && (
-          <View
-            style={[
-              styles.results,
-              isDarkMode ? styles.darkCard : styles.lightCard,
-            ]}
-          >
-            <Text style={[styles.heading, textStyle]}>Daily Goals</Text>
-
-            <Text style={textStyle}>Calorie Goal: {goals.calorieGoal}</Text>
-
-            <Text style={textStyle}>Protein Goal: {goals.proteinGoal}g</Text>
-
-            {remainingCalories !== null && remainingCalories > 0 ? (
-              <Text style={textStyle}>
-                Remaining Calories: {remainingCalories}
-              </Text>
-            ) : remainingCalories !== null && remainingCalories <= 0 ? (
-              <Text style={textStyle}>
-                Over goal by: {Math.abs(remainingCalories)} calories
-              </Text>
-            ) : (
-              <Text style={textStyle}>Calorie goal reached!</Text>
-            )}
-
-            {remainingProtein !== null && remainingProtein > 0 ? (
-              <Text style={textStyle}>
-                Remaining Protein: {remainingProtein}
-              </Text>
-            ) : remainingProtein !== null && remainingProtein <= 0 ? (
-              <Text style={textStyle}>
-                Over goal by: {Math.abs(remainingProtein)}g protein
-              </Text>
-            ) : (
-              <Text style={textStyle}>Protein goal reached!</Text>
-            )}
-
-            <Text style={textStyle}>
-              Calorie Goal Completed: {caloriePercentage.toFixed(1)}%
-            </Text>
-
-            <Text style={textStyle}>
-              Protein Goal Completed: {proteinPercentage.toFixed(1)}%
-            </Text>
-          </View>
-        )}
+        <NutritionSummary
+          textStyle={textStyle}
+          isDarkMode={isDarkMode}
+          totalCalories={totalCalories}
+          totalProtein={totalProteins}
+          remainingCalories={remainingCalories}
+          remainingProtein={remainingProtein}
+          caloriePercentage={caloriePercentage}
+          proteinPercentage={proteinPercentage}
+          goals={goals}
+        />
       </View>
     </ScrollView>
   );
