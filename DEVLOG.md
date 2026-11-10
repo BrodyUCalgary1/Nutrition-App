@@ -109,4 +109,4 @@
 
 - Debugging is important, if i hadnt debugged at the start of today I probably would have never noticed that error
 - a little about expo camera and how it can read barcodes
-- I already had past experience with apis, so this was more of a refresher. however i think this is one of my biggest milestones so far!
+- I already had past experience with API's, so this was more of a refresher. however i think this is one of my biggest milestones so far!
