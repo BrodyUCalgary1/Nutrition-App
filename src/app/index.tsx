@@ -2,12 +2,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Crypto from "expo-crypto";
 import { useEffect, useState } from "react";
 import {
+  Button,
   ScrollView,
   StyleSheet,
   Text,
   View,
   useColorScheme,
 } from "react-native";
+import BarcodeScanner from "./BarcodeScanner";
 import DailyFoodList from "./DailyFoodsList";
 import DateNavigation from "./DateNavigation";
 import FoodLibrary from "./FoodLibrary";
@@ -43,6 +45,7 @@ export default function HomeScreen() {
   const [searchQuery, setSearchQuery] = useState(""); //saving whats in the search bar for saved foods
   const [selectedDate, setSelectedDate] = useState(""); //select which day it is and see what you entered
   const [isSearchFocused, setIsSearchFocused] = useState(false); //search focus for the search bar
+  const [isScannerOpen, setIsScannerOpen] = useState(false); //tracks if the scanner is open or not
 
   useEffect(() => {
     async function loadData() {
@@ -173,7 +176,9 @@ export default function HomeScreen() {
 
   const titleStyle = isDarkMode ? styles.darkTitle : styles.lightTitle;
 
-  return (
+  return isScannerOpen ? (
+    <BarcodeScanner onClose={() => setIsScannerOpen(false)} />
+  ) : (
     <ScrollView style={containerStyle} contentContainerStyle={{ flexGrow: 1 }}>
       <View>
         <Text style={titleStyle}>My Nutrition App</Text>
@@ -221,6 +226,8 @@ export default function HomeScreen() {
             }
           }}
         />
+
+        <Button title="Scan Barcode" onPress={() => setIsScannerOpen(true)} />
 
         <FoodLibrary
           filteredFoods={filteredFoods}

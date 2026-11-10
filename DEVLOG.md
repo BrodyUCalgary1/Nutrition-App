@@ -94,3 +94,19 @@
 
 - The importance of props. Switching to multiple files helped me understand the importance of props a lot more than before
 - How useful it is to keep things in seperate files and neat. Using prettier and multiple files really helped make the code alot easier to process
+
+---
+
+### November 10th 2026
+
+**Created**
+
+- Fixed bug with the search bar closing before you could click add or delete ( just delayed its closing)
+- added expo camera and barcode search to pull product barcodes
+- added Product Lookup which uses the openfoodfacts api to get the calories,name,protiens,carbs,fats etc
+
+**Learned**
+
+- Debugging is important, if i hadnt debugged at the start of today I probably would have never noticed that error
+- a little about expo camera and how it can read barcodes
+- I already had past experience with apis, so this was more of a refresher. however i think this is one of my biggest milestones so far!
