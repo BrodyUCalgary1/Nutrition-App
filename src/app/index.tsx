@@ -229,7 +229,11 @@ export default function HomeScreen() {
           isDarkMode={isDarkMode}
           onSearchChange={setSearchQuery}
           onSearchFocus={() => setIsSearchFocused(true)}
-          onSearchBlur={() => setIsSearchFocused(false)}
+          onSearchBlur={() => {
+            setTimeout(() => {
+              setIsSearchFocused(false);
+            }, 200);
+          }}
           onAddFood={(food) => {
             setFoods((previousFoods) => [
               ...previousFoods,
