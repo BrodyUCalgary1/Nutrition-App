@@ -110,3 +110,17 @@
 - Debugging is important, if i hadnt debugged at the start of today I probably would have never noticed that error
 - a little about expo camera and how it can read barcodes
 - I already had past experience with API's, so this was more of a refresher. however i think this is one of my biggest milestones so far!
+
+---
+
+### November 12th 2026
+
+**Created**
+
+- Scanned Products are now able to added to the daily food log, as well as entering how big of a serving you ate
+- Products can now be cached to stop as many api lookups
+
+**Learned**
+
+- Learning more about what it means to cache data and how to approach it.
+- understanding how parent child functions work, for example saveScannedFood is passed through three files before being used.

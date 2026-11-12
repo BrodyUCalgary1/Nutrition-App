@@ -1,23 +1,40 @@
 import {
-    CameraView,
-    useCameraPermissions,
-    type BarcodeScanningResult,
+  CameraView,
+  useCameraPermissions,
+  type BarcodeScanningResult,
 } from "expo-camera";
 import { useRef, useState } from "react";
-import { Button, StyleSheet, Text, View } from "react-native";
+import {
+  Button,
+  Keyboard,
+  StyleSheet,
+  Text,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
+import type { NutritionEntry, SavedFood } from "./NutritionInputs";
+import { calculateServingNutrition } from "./NutritionUtils";
 import { lookupProduct, type ProductData } from "./ProductLookup";
+import ProductReview from "./ProductReview";
 
 type BarcodeScannerProps = {
   onClose: () => void;
+  onAddFood: (food: NutritionEntry) => void;
+  onSaveFood: (food: Omit<SavedFood, "id">) => void;
 };
 
-export default function BarcodeScanner({ onClose }: BarcodeScannerProps) {
+export default function BarcodeScanner({
+  onClose,
+  onAddFood,
+  onSaveFood,
+}: BarcodeScannerProps) {
   const [permission, requestPermission] = useCameraPermissions();
   const hasScanned = useRef(false);
   const [barcode, setBarcode] = useState<string | null>(null);
   const [isLookingUp, setIsLookingUp] = useState(false); //api request is in progress0
   const [product, setProduct] = useState<ProductData | null>(null); //stroes the product name
   const [lookupError, setLookupError] = useState<string | null>(null); //stores the error message if the api fails
+  const [servingGrams, setServingGrams] = useState("100");
 
   async function handleBarcodeScanned(result: BarcodeScanningResult) {
     if (hasScanned.current) return;
@@ -39,6 +56,16 @@ export default function BarcodeScanner({ onClose }: BarcodeScannerProps) {
       setIsLookingUp(false);
     }
   }
+
+  const parsedServingGrams = Number(servingGrams);
+
+  const servingNutrition =
+    product &&
+    servingGrams.trim() !== "" &&
+    Number.isFinite(parsedServingGrams) &&
+    parsedServingGrams > 0
+      ? calculateServingNutrition(product, parsedServingGrams)
+      : null;
 
   if (!permission) {
     return <View />;
@@ -65,45 +92,39 @@ export default function BarcodeScanner({ onClose }: BarcodeScannerProps) {
           }}
         />
       ) : (
-        <View>
-          <Text>Barcode detected!</Text>
-          <Text>{barcode}</Text>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+          <View>
+            <Text>Barcode detected!</Text>
+            <Text>{barcode}</Text>
 
-          {isLookingUp ? (
-            <Text>Looking up product...</Text>
-          ) : lookupError ? (
-            <Text>{lookupError}</Text>
-          ) : product ? (
-            <View>
-              <Text>Product: {product.name}</Text>
-              <Text>Brand: {product.brand || "Unknown"}</Text>
-              <Text>Serving Size: {product.servingSize || "Unavailable"}</Text>
+            {isLookingUp ? (
+              <Text>Looking up product...</Text>
+            ) : lookupError ? (
+              <Text>{lookupError}</Text>
+            ) : product ? (
+              <ProductReview
+                product={product}
+                servingGrams={servingGrams}
+                nutrition={servingNutrition}
+                onServingChange={setServingGrams}
+                onAddFood={onAddFood}
+                onSaveFood={onSaveFood}
+              />
+            ) : (
+              <Text>No product information available.</Text>
+            )}
 
-              <Text>
-                Calories: {product.caloriesPer100g ?? "Unavailable"} kcal / 100g
-              </Text>
-              <Text>
-                Protein: {product.proteinPer100g ?? "Unavailable"} g / 100g
-              </Text>
-              <Text>
-                Carbs: {product.carbsPer100g ?? "Unavailable"} g / 100g
-              </Text>
-              <Text>Fat: {product.fatPer100g ?? "Unavailable"} g / 100g</Text>
-            </View>
-          ) : (
-            <Text>No product information available.</Text>
-          )}
-
-          <Button
-            title="Scan Again"
-            onPress={() => {
-              hasScanned.current = false;
-              setBarcode(null);
-              setProduct(null);
-              setLookupError(null);
-            }}
-          />
-        </View>
+            <Button
+              title="Scan Again"
+              onPress={() => {
+                hasScanned.current = false;
+                setBarcode(null);
+                setProduct(null);
+                setLookupError(null);
+              }}
+            />
+          </View>
+        </TouchableWithoutFeedback>
       )}
 
       <Button title="Go Back" onPress={onClose} />

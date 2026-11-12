@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const API_BASE_URL = "https://world.openfoodfacts.org/api/v3.6/product";
 
 export type ProductData = {
@@ -56,6 +57,24 @@ export function convertProductData(data: ProductLookupResponse): ProductData {
 }
 
 export async function lookupProduct(barcode: string): Promise<ProductData> {
+  const cacheKey = `productCache:${barcode}`;
+
+  // STEP 1: Check local cache
+  try {
+    const cachedProduct = await AsyncStorage.getItem(cacheKey);
+
+    if (cachedProduct !== null) {
+      console.log("Product found in cache:", barcode);
+
+      return JSON.parse(cachedProduct) as ProductData;
+    }
+  } catch (error) {
+    console.warn("Cache lookup failed:", error);
+  }
+
+  // STEP 2: Cache miss - request product from API
+  console.log("Product not cached. Requesting API:", barcode);
+
   const url = `${API_BASE_URL}/${encodeURIComponent(barcode)}.json?fields=code,product_name,brands,quantity,serving_size,nutrition`;
 
   const response = await fetch(url, {
@@ -71,5 +90,16 @@ export async function lookupProduct(barcode: string): Promise<ProductData> {
 
   const data = await response.json();
 
-  return convertProductData(data);
+  // STEP 3: Convert API response into our ProductData format
+  const product = convertProductData(data);
+
+  // STEP 4: Save product to local cache
+  try {
+    await AsyncStorage.setItem(cacheKey, JSON.stringify(product));
+  } catch (error) {
+    console.warn("Could not save product to cache:", error);
+  }
+
+  // STEP 5: Return product
+  return product;
 }

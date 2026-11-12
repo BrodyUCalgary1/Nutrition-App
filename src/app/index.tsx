@@ -120,6 +120,27 @@ export default function HomeScreen() {
     );
   }
 
+  function saveScannedFood(food: Omit<SavedFood, "id">) {
+    setSavedFoods((currentFoods) => {
+      // Prevent saving the same barcode twice
+      const alreadySaved = currentFoods.some(
+        (savedFood) => savedFood.barcode === food.barcode,
+      );
+
+      if (alreadySaved) {
+        return currentFoods;
+      }
+
+      return [
+        ...currentFoods,
+        {
+          ...food,
+          id: Crypto.randomUUID(),
+        },
+      ];
+    });
+  }
+
   const today = getLocalDateString();
 
   const selectedDaysFoods = foods.filter((food) => food.date === selectedDate);
@@ -177,7 +198,22 @@ export default function HomeScreen() {
   const titleStyle = isDarkMode ? styles.darkTitle : styles.lightTitle;
 
   return isScannerOpen ? (
-    <BarcodeScanner onClose={() => setIsScannerOpen(false)} />
+    <BarcodeScanner
+      onClose={() => setIsScannerOpen(false)}
+      onAddFood={(food) => {
+        setFoods((currentFoods) => [
+          ...currentFoods,
+          {
+            ...food,
+            id: Crypto.randomUUID(),
+            date: getLocalDateString(),
+          },
+        ]);
+
+        setIsScannerOpen(false);
+      }}
+      onSaveFood={saveScannedFood}
+    />
   ) : (
     <ScrollView style={containerStyle} contentContainerStyle={{ flexGrow: 1 }}>
       <View>
