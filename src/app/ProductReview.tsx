@@ -1,5 +1,5 @@
 import { Button, StyleSheet, Text, TextInput, View } from "react-native";
-import type { NutritionEntry, SavedFood } from "./NutritionInputs";
+import type { NutritionEntry, SavedFood } from "../types/nutrition";
 import type { ServingNutrition } from "./NutritionUtils";
 import type { ProductData } from "./ProductLookup";
 
@@ -70,6 +70,22 @@ export default function ProductReview({
             name: product.name,
             calories: nutrition.calories,
             protein: nutrition.protein,
+          });
+
+          onSaveFood({
+            name: product.name,
+            calories: nutrition.calories,
+            protein: nutrition.protein,
+
+            barcode: product.barcode,
+            brand: product.brand,
+            quantity: product.quantity,
+            servingGrams: Number(servingGrams),
+
+            caloriesPer100g: product.caloriesPer100g,
+            proteinPer100g: product.proteinPer100g,
+            carbsPer100g: product.carbsPer100g,
+            fatPer100g: product.fatPer100g,
           });
         }}
       />

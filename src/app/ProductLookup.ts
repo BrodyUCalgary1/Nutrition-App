@@ -56,20 +56,55 @@ export function convertProductData(data: ProductLookupResponse): ProductData {
   };
 }
 
+function isNumberOrNull(value: unknown): boolean {
+  return (
+    value === null || (typeof value === "number" && Number.isFinite(value))
+  );
+}
+
+function isValidProductData(value: unknown): value is ProductData {
+  if (typeof value !== "object" || value === null) {
+    return false;
+  }
+
+  const product = value as Record<string, unknown>;
+
+  return (
+    typeof product.barcode === "string" &&
+    product.barcode !== "" &&
+    typeof product.name === "string" &&
+    typeof product.brand === "string" &&
+    typeof product.quantity === "string" &&
+    typeof product.servingSize === "string" &&
+    isNumberOrNull(product.caloriesPer100g) &&
+    isNumberOrNull(product.proteinPer100g) &&
+    isNumberOrNull(product.carbsPer100g) &&
+    isNumberOrNull(product.fatPer100g)
+  );
+}
+
 export async function lookupProduct(barcode: string): Promise<ProductData> {
   const cacheKey = `productCache:${barcode}`;
 
+  // STEP 1: Check local cache
   // STEP 1: Check local cache
   try {
     const cachedProduct = await AsyncStorage.getItem(cacheKey);
 
     if (cachedProduct !== null) {
-      console.log("Product found in cache:", barcode);
+      const parsed: unknown = JSON.parse(cachedProduct);
 
-      return JSON.parse(cachedProduct) as ProductData;
+      if (isValidProductData(parsed)) {
+        console.log("Product found in cache:", barcode);
+        return parsed;
+      }
+
+      console.warn("Cached product was invalid, removing:", barcode);
+      await AsyncStorage.removeItem(cacheKey);
     }
   } catch (error) {
     console.warn("Cache lookup failed:", error);
+    await AsyncStorage.removeItem(cacheKey).catch(() => {});
   }
 
   // STEP 2: Cache miss - request product from API

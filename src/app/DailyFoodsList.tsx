@@ -1,5 +1,5 @@
 import { Button, StyleSheet, Text, TextStyle, View } from "react-native";
-import { DailyFoods } from "./NutritionInputs";
+import { DailyFoods } from "../types/nutrition";
 
 type DailyFoodListProps = {
   foods: DailyFoods[];

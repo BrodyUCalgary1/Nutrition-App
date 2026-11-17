@@ -7,34 +7,7 @@ import {
   View,
   useColorScheme,
 } from "react-native";
-
-// Define what the food will send to other files
-export type NutritionEntry = {
-  name: string;
-  calories: number;
-  protein: number;
-};
-//saved foods that are stored in the library with an id
-export type SavedFood = NutritionEntry & {
-  id: string;
-
-  // Optional information for barcode-scanned products
-  barcode?: string;
-  brand?: string;
-  quantity?: string;
-  servingGrams?: number;
-
-  // Original nutrition values per 100g
-  caloriesPer100g?: number | null;
-  proteinPer100g?: number | null;
-  carbsPer100g?: number | null;
-  fatPer100g?: number | null;
-};
-
-export type DailyFoods = NutritionEntry & {
-  id: string;
-  date: string;
-};
+import type { NutritionEntry } from "../types/nutrition";
 
 // Define the component's properties
 type Props = {
@@ -51,9 +24,9 @@ export default function NutritionInputs({
   // Store the user's inputs
   const [name, setName] = useState(initialData?.name ?? "");
   const [calories, setCalories] = useState(
-    initialData?.calories.toString ?? "",
+    initialData?.calories.toString() ?? "",
   );
-  const [protein, setProtein] = useState(initialData?.protein.toString ?? "");
+  const [protein, setProtein] = useState(initialData?.protein.toString() ?? "");
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -84,9 +57,12 @@ export default function NutritionInputs({
       setError("Please enter a number");
       return;
     }
-    if (Number(calories) <= 0 || Number(protein) <= 0) {
+    if (Number(calories) <= 0) {
       setError("Please enter non-negative numbers and non-Zero");
       return;
+    }
+    if (Number(protein) < 0) {
+      setError("Please enter a non-negative number");
     }
 
     setError("");

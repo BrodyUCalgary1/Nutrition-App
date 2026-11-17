@@ -1,5 +1,3 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as Crypto from "expo-crypto";
 import { useEffect, useState } from "react";
 import {
   Button,
@@ -9,16 +7,13 @@ import {
   View,
   useColorScheme,
 } from "react-native";
+import { useNutritionData } from "../hooks/useNutritionData";
 import BarcodeScanner from "./BarcodeScanner";
 import DailyFoodList from "./DailyFoodsList";
 import DateNavigation from "./DateNavigation";
 import FoodLibrary from "./FoodLibrary";
-import NutritionGoals, { NutritionGoal } from "./NutritionGoals";
-import NutritionInputs, {
-  DailyFoods,
-  NutritionEntry,
-  SavedFood,
-} from "./NutritionInputs";
+import NutritionGoals from "./NutritionGoals";
+import NutritionInputs from "./NutritionInputs";
 import NutritionSummary from "./NutritionSummary";
 import {
   calculateCaloriePercentage,
@@ -37,109 +32,27 @@ function getLocalDateString(date: Date = new Date()): string {
 
 export default function HomeScreen() {
   // Store the information received from NutritionInputs
-  const [goals, setGoals] = useState<NutritionGoal | null>(null); //goals that are used in todays day.
-  const [foods, setFoods] = useState<DailyFoods[]>([]); //foods that are used in todays day.
-  const [savedFoods, setSavedFoods] = useState<SavedFood[]>([]); //food list for the foods that we want to save in the library
-  const [isLoaded, setIsLoaded] = useState(false); //stops us from loading empty data sets if the code hasnt finsihed running yet
-  const [editingIndex, setEditingIndex] = useState<number | null>(null); //index for the food we want to edit
+  const {
+    goals,
+    saveGoals,
+    foods,
+    savedFoods,
+    isLoaded,
+    addFood,
+    deleteFood,
+    editFood,
+    saveFoodToLibrary,
+    deleteSavedFood,
+  } = useNutritionData();
+  const [editingId, setEditingId] = useState<string | null>(null); //index for the food we want to edit
   const [searchQuery, setSearchQuery] = useState(""); //saving whats in the search bar for saved foods
   const [selectedDate, setSelectedDate] = useState(""); //select which day it is and see what you entered
   const [isSearchFocused, setIsSearchFocused] = useState(false); //search focus for the search bar
   const [isScannerOpen, setIsScannerOpen] = useState(false); //tracks if the scanner is open or not
 
   useEffect(() => {
-    async function loadData() {
-      //async function to load data like food and goals
-      try {
-        const storedFoods = await AsyncStorage.getItem("foods");
-        const storedGoals = await AsyncStorage.getItem("goals");
-        const storedSavedFoods = await AsyncStorage.getItem("savedFoods");
-        if (storedSavedFoods !== null) {
-          setSavedFoods(JSON.parse(storedSavedFoods));
-        }
-
-        if (storedFoods !== null) {
-          setFoods(JSON.parse(storedFoods));
-        }
-
-        if (storedGoals !== null) {
-          setGoals(JSON.parse(storedGoals));
-        }
-      } catch (error) {
-        console.log("Error loading data:", error);
-      } finally {
-        setIsLoaded(true);
-      }
-    }
-
-    loadData();
-  }, []);
-
-  useEffect(() => {
-    if (!isLoaded) return; //another async function however, this runs everytime foods, goals or loaded changes
-
-    async function saveData() {
-      try {
-        await AsyncStorage.setItem("foods", JSON.stringify(foods));
-        await AsyncStorage.setItem("goals", JSON.stringify(goals));
-        await AsyncStorage.setItem("savedFoods", JSON.stringify(savedFoods));
-      } catch (error) {
-        console.log("Error saving data:", error);
-      }
-    }
-
-    saveData();
-  }, [foods, goals, isLoaded, savedFoods]);
-
-  useEffect(() => {
     setSelectedDate(getLocalDateString());
   }, []);
-
-  function deleteFood(indexToDelete: number) {
-    setFoods((currentFoods) =>
-      currentFoods.filter((food, index) => index !== indexToDelete),
-    );
-  }
-  function editFood(indexToEdit: number, updatedFood: NutritionEntry) {
-    const newFoods = foods.map((food, index) => {
-      if (index === indexToEdit) {
-        return {
-          ...food,
-          ...updatedFood,
-        };
-      }
-
-      return food;
-    });
-    setFoods(newFoods);
-  }
-
-  function deleteSavedFood(idToDelete: string) {
-    setSavedFoods((currentSavedFoods) =>
-      currentSavedFoods.filter((food) => food.id !== idToDelete),
-    );
-  }
-
-  function saveScannedFood(food: Omit<SavedFood, "id">) {
-    setSavedFoods((currentFoods) => {
-      // Prevent saving the same barcode twice
-      const alreadySaved = currentFoods.some(
-        (savedFood) => savedFood.barcode === food.barcode,
-      );
-
-      if (alreadySaved) {
-        return currentFoods;
-      }
-
-      return [
-        ...currentFoods,
-        {
-          ...food,
-          id: Crypto.randomUUID(),
-        },
-      ];
-    });
-  }
 
   const today = getLocalDateString();
 
@@ -201,18 +114,10 @@ export default function HomeScreen() {
     <BarcodeScanner
       onClose={() => setIsScannerOpen(false)}
       onAddFood={(food) => {
-        setFoods((currentFoods) => [
-          ...currentFoods,
-          {
-            ...food,
-            id: Crypto.randomUUID(),
-            date: getLocalDateString(),
-          },
-        ]);
-
+        addFood(food, getLocalDateString());
         setIsScannerOpen(false);
       }}
-      onSaveFood={saveScannedFood}
+      onSaveFood={saveFoodToLibrary}
     />
   ) : (
     <ScrollView style={containerStyle} contentContainerStyle={{ flexGrow: 1 }}>
@@ -220,45 +125,15 @@ export default function HomeScreen() {
         <Text style={titleStyle}>My Nutrition App</Text>
 
         <NutritionInputs
-          initialData={editingIndex !== null ? foods[editingIndex] : undefined}
-          onCancel={() => setEditingIndex(null)}
+          initialData={foods.find((food) => food.id === editingId)}
+          onCancel={() => setEditingId(null)}
           onSave={(data) => {
-            if (editingIndex !== null) {
-              editFood(editingIndex, data);
-              setEditingIndex(null);
+            if (editingId !== null) {
+              editFood(editingId, data);
+              setEditingId(null);
             } else {
-              // Add food to today's food log
-              setFoods((previousFoods) => [
-                ...previousFoods,
-                {
-                  ...data,
-                  id: Crypto.randomUUID(),
-                  date: getLocalDateString(),
-                },
-              ]);
-
-              // Add to library if it doesn't already exist
-              setSavedFoods((currentSavedFoods) => {
-                const alreadySaved = currentSavedFoods.some(
-                  (food) =>
-                    food.name.trim().toLowerCase() ===
-                      data.name.trim().toLowerCase() &&
-                    food.calories === data.calories &&
-                    food.protein === data.protein,
-                );
-
-                if (alreadySaved) {
-                  return currentSavedFoods;
-                }
-
-                return [
-                  ...currentSavedFoods,
-                  {
-                    ...data,
-                    id: Crypto.randomUUID(),
-                  },
-                ];
-              });
+              addFood(data, getLocalDateString());
+              saveFoodToLibrary(data);
             }
           }}
         />
@@ -277,20 +152,11 @@ export default function HomeScreen() {
               setIsSearchFocused(false);
             }, 200);
           }}
-          onAddFood={(food) => {
-            setFoods((previousFoods) => [
-              ...previousFoods,
-              {
-                ...food,
-                id: Crypto.randomUUID(),
-                date: getLocalDateString(),
-              },
-            ]);
-          }}
+          onAddFood={(food) => addFood(food, getLocalDateString())}
           onDeleteFood={deleteSavedFood}
         />
 
-        <NutritionGoals onSave={(data) => setGoals(data)} />
+        <NutritionGoals onSave={saveGoals} />
 
         {/*Display Todays Date and Navigate*/}
         <DateNavigation
@@ -305,14 +171,8 @@ export default function HomeScreen() {
           foods={selectedDaysFoods}
           textStyle={textStyle}
           isDarkMode={isDarkMode}
-          onDelete={(id) => {
-            setFoods((currentFoods) =>
-              currentFoods.filter((food) => food.id !== id),
-            );
-          }}
-          onEdit={(id) => {
-            setEditingIndex(foods.findIndex((food) => food.id === id));
-          }}
+          onDelete={deleteFood}
+          onEdit={setEditingId}
         />
         {/* Display daily goals */}
         <NutritionSummary
