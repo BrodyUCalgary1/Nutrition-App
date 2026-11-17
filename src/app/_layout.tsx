@@ -16,6 +16,7 @@ export default function RootLayout() {
       <NutritionProvider>
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="add-food" options={{ presentation: "modal" }} />
         </Stack>
       </NutritionProvider>
     </ThemeProvider>

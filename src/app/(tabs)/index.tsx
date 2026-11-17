@@ -1,4 +1,3 @@
-import BarcodeScanner from "@/components/nutrition/BarcodeScanner";
 import DailyFoodList from "@/components/nutrition/DailyFoodsList";
 import {
   calculateCaloriePercentage,
@@ -9,7 +8,6 @@ import {
 } from "@/components/nutrition/NutritionUtils";
 import { useEffect, useState } from "react";
 import {
-  Button,
   ScrollView,
   StyleSheet,
   Text,
@@ -23,15 +21,7 @@ import { useNutrition } from "../../context/NutritionContext";
 
 export default function HomeScreen() {
   // Store the information received from NutritionInputs
-  const {
-    goals,
-    foods,
-    isLoaded,
-    addFood,
-    deleteFood,
-    editFood,
-    saveFoodToLibrary,
-  } = useNutrition();
+  const { goals, foods, isLoaded, deleteFood, editFood } = useNutrition();
   const [editingId, setEditingId] = useState<string | null>(null); //index for the food we want to edit
   const [selectedDate, setSelectedDate] = useState(""); //select which day it is and see what you entered
   const [isScannerOpen, setIsScannerOpen] = useState(false); //tracks if the scanner is open or not
@@ -92,16 +82,7 @@ export default function HomeScreen() {
 
   const titleStyle = isDarkMode ? styles.darkTitle : styles.lightTitle;
 
-  return isScannerOpen ? (
-    <BarcodeScanner
-      onClose={() => setIsScannerOpen(false)}
-      onAddFood={(food) => {
-        addFood(food, getLocalDateString());
-        setIsScannerOpen(false);
-      }}
-      onSaveFood={saveFoodToLibrary}
-    />
-  ) : (
+  return (
     <ScrollView
       style={containerStyle}
       contentContainerStyle={{ flexGrow: 1, paddingBottom: 120 }}
@@ -109,21 +90,16 @@ export default function HomeScreen() {
       <View>
         <Text style={titleStyle}>My Nutrition App</Text>
 
-        <NutritionInputs
-          initialData={foods.find((food) => food.id === editingId)}
-          onCancel={() => setEditingId(null)}
-          onSave={(data) => {
-            if (editingId !== null) {
+        {editingId !== null && (
+          <NutritionInputs
+            initialData={foods.find((food) => food.id === editingId)}
+            onCancel={() => setEditingId(null)}
+            onSave={(data) => {
               editFood(editingId, data);
               setEditingId(null);
-            } else {
-              addFood(data, getLocalDateString());
-              saveFoodToLibrary(data);
-            }
-          }}
-        />
-
-        <Button title="Scan Barcode" onPress={() => setIsScannerOpen(true)} />
+            }}
+          />
+        )}
 
         {/*Display Todays Date and Navigate*/}
         <DateNavigation
@@ -220,15 +196,6 @@ const styles = StyleSheet.create({
     marginTop: 15,
     marginBottom: 8,
   },
-
-  // Nutrition cards
-  results: {
-    marginTop: 20,
-    padding: 15,
-    borderRadius: 10,
-    gap: 8,
-  },
-
   darkCard: {
     backgroundColor: "#242424",
     borderColor: "#444444",
@@ -237,15 +204,6 @@ const styles = StyleSheet.create({
   lightCard: {
     backgroundColor: "#ffffff",
     borderColor: "#dddddd",
-  },
-
-  // Search input
-  searchInput: {
-    borderWidth: 1,
-    borderRadius: 8,
-    padding: 12,
-    marginVertical: 10,
-    fontSize: 16,
   },
 
   darkInput: {
@@ -258,27 +216,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
     color: "#222222",
     borderColor: "#cccccc",
-  },
-
-  // Food Library
-  foodItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: 10,
-    marginVertical: 5,
-    borderWidth: 1,
-    borderRadius: 8,
-    gap: 5,
-  },
-
-  foodInfo: {
-    flex: 1,
-  },
-
-  foodName: {
-    fontWeight: "bold",
-    fontSize: 16,
   },
 
   // Daily food entries

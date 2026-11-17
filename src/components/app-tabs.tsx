@@ -1,4 +1,6 @@
+import { useTheme } from "@/hooks/use-theme";
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import { TabList, Tabs, TabSlot, TabTrigger } from "expo-router/ui";
 import type { ComponentProps } from "react";
 import { Pressable, StyleSheet, Text } from "react-native";
@@ -11,10 +13,14 @@ type TabButtonProps = ComponentProps<typeof Pressable> & {
 };
 
 function TabButton({ label, icon, isFocused, ...props }: TabButtonProps) {
-  const color = isFocused ? "#1D4FD8" : "#5B6B8A";
+  const theme = useTheme();
+  const color = isFocused ? theme.primaryText : theme.textSecondary;
 
   return (
-    <Pressable {...props} style={[styles.tab, isFocused && styles.tabActive]}>
+    <Pressable
+      {...props}
+      style={[styles.tab, isFocused && { backgroundColor: theme.primarySoft }]}
+    >
       <Ionicons name={icon} size={22} color={color} />
       <Text style={[styles.label, { color }]}>{label}</Text>
     </Pressable>
@@ -23,11 +29,21 @@ function TabButton({ label, icon, isFocused, ...props }: TabButtonProps) {
 
 export default function AppTabs() {
   const insets = useSafeAreaInsets();
+  const theme = useTheme();
 
   return (
     <Tabs>
       <TabSlot />
-      <TabList style={[styles.pill, { bottom: insets.bottom + 12 }]}>
+      <TabList
+        style={[
+          styles.pill,
+          {
+            bottom: insets.bottom + 12,
+            backgroundColor: theme.card,
+            shadowColor: theme.primary,
+          },
+        ]}
+      >
         <TabTrigger name="index" href="/" asChild>
           <TabButton label="Today" icon="home-outline" />
         </TabTrigger>
@@ -38,11 +54,19 @@ export default function AppTabs() {
           <TabButton label="Goals" icon="locate-outline" />
         </TabTrigger>
       </TabList>
+
       <Pressable
         accessibilityRole="button"
         accessibilityLabel="Add food"
-        onPress={() => console.log("Add food pressed")}
-        style={[styles.fab, { bottom: insets.bottom + 12 }]}
+        onPress={() => router.push("/add-food")}
+        style={[
+          styles.fab,
+          {
+            bottom: insets.bottom + 12,
+            backgroundColor: theme.primary,
+            shadowColor: theme.primary,
+          },
+        ]}
       >
         <Ionicons name="add" size={30} color="#ffffff" />
       </Pressable>
@@ -60,8 +84,6 @@ const styles = StyleSheet.create({
     gap: 4,
     flexDirection: "row",
     borderRadius: 32,
-    backgroundColor: "#ffffff",
-    shadowColor: "#2563EB",
     shadowOpacity: 0.18,
     shadowRadius: 24,
     shadowOffset: { width: 0, height: 8 },
@@ -74,9 +96,6 @@ const styles = StyleSheet.create({
     gap: 2,
     borderRadius: 26,
   },
-  tabActive: {
-    backgroundColor: "#E3ECFD",
-  },
   label: {
     fontSize: 11,
     fontWeight: "600",
@@ -87,10 +106,8 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: "#2563EB",
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: "#2563EB",
     shadowOpacity: 0.35,
     shadowRadius: 24,
     shadowOffset: { width: 0, height: 8 },

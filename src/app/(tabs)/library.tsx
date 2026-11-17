@@ -37,11 +37,8 @@ export default function LibraryScreen() {
       <FoodLibrary
         filteredFoods={filteredFoods}
         searchQuery={searchQuery}
-        isSearchFocused={true}
         isDarkMode={isDarkMode}
         onSearchChange={setSearchQuery}
-        onSearchFocus={() => {}}
-        onSearchBlur={() => {}}
         onAddFood={(food) => addFood(food, getLocalDateString())}
         onDeleteFood={deleteSavedFood}
       />

@@ -3,24 +3,40 @@
  * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://unistyl.es/), etc.
  */
 
-import '@/global.css';
+import "@/global.css";
 
-import { Platform } from 'react-native';
+import { Platform } from "react-native";
 
 export const Colors = {
   light: {
-    text: '#000000',
-    background: '#ffffff',
-    backgroundElement: '#F0F0F3',
-    backgroundSelected: '#E0E1E6',
-    textSecondary: '#60646C',
+    text: "#0F1B33",
+    textSecondary: "#5B6B8A",
+    background: "#EEF3FC",
+    backgroundElement: "#FFFFFF",
+    backgroundSelected: "#E3ECFD",
+    card: "#FFFFFF",
+    border: "#D5DFF2",
+    primary: "#2563EB",
+    primaryText: "#1D4FD8",
+    primarySoft: "#E3ECFD",
+    accent: "#F59E0B",
+    accentSoft: "#FDEFD6",
+    danger: "#DC2626",
   },
   dark: {
-    text: '#ffffff',
-    background: '#000000',
-    backgroundElement: '#212225',
-    backgroundSelected: '#2E3135',
-    textSecondary: '#B0B4BA',
+    text: "#F2F5FC",
+    textSecondary: "#9AA8C7",
+    background: "#0A1020",
+    backgroundElement: "#141C30",
+    backgroundSelected: "#1B2A4D",
+    card: "#141C30",
+    border: "#26324F",
+    primary: "#3B82F6",
+    primaryText: "#8DB4FF",
+    primarySoft: "#1B2A4D",
+    accent: "#FBBF24",
+    accentSoft: "#3A2F12",
+    danger: "#F87171",
   },
 } as const;
 
@@ -29,25 +45,25 @@ export type ThemeColor = keyof typeof Colors.light & keyof typeof Colors.dark;
 export const Fonts = Platform.select({
   ios: {
     /** iOS `UIFontDescriptorSystemDesignDefault` */
-    sans: 'system-ui',
+    sans: "system-ui",
     /** iOS `UIFontDescriptorSystemDesignSerif` */
-    serif: 'ui-serif',
+    serif: "ui-serif",
     /** iOS `UIFontDescriptorSystemDesignRounded` */
-    rounded: 'ui-rounded',
+    rounded: "ui-rounded",
     /** iOS `UIFontDescriptorSystemDesignMonospaced` */
-    mono: 'ui-monospace',
+    mono: "ui-monospace",
   },
   default: {
-    sans: 'normal',
-    serif: 'serif',
-    rounded: 'normal',
-    mono: 'monospace',
+    sans: "normal",
+    serif: "serif",
+    rounded: "normal",
+    mono: "monospace",
   },
   web: {
-    sans: 'var(--font-display)',
-    serif: 'var(--font-serif)',
-    rounded: 'var(--font-rounded)',
-    mono: 'var(--font-mono)',
+    sans: "var(--font-display)",
+    serif: "var(--font-serif)",
+    rounded: "var(--font-rounded)",
+    mono: "var(--font-mono)",
   },
 });
 

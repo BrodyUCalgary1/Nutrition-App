@@ -4,11 +4,8 @@ import { SavedFood } from "../../types/nutrition";
 type FoodLibraryProps = {
   filteredFoods: SavedFood[];
   searchQuery: string;
-  isSearchFocused: boolean;
   isDarkMode: boolean;
   onSearchChange: (query: string) => void;
-  onSearchFocus: () => void;
-  onSearchBlur: () => void;
   onAddFood: (food: SavedFood) => void;
   onDeleteFood: (id: string) => void;
 };
@@ -16,11 +13,8 @@ type FoodLibraryProps = {
 export default function FoodLibrary({
   filteredFoods,
   searchQuery,
-  isSearchFocused,
   isDarkMode,
   onSearchChange,
-  onSearchFocus,
-  onSearchBlur,
   onAddFood,
   onDeleteFood,
 }: FoodLibraryProps) {
@@ -31,53 +25,49 @@ export default function FoodLibrary({
         placeholder="Search saved foods..."
         value={searchQuery}
         onChangeText={onSearchChange}
-        onFocus={onSearchFocus}
-        onBlur={onSearchBlur}
         style={[
           styles.searchInput,
           isDarkMode ? styles.darkInput : styles.lightInput,
         ]}
       />
-      {isSearchFocused && (
-        <>
-          {filteredFoods.map((food) => (
-            <View
-              style={[
-                styles.foodItem,
-                isDarkMode ? styles.darkCard : styles.lightCard,
-              ]}
-              key={food.id}
-            >
-              <View style={styles.foodInfo}>
-                <Text
-                  style={[
-                    styles.foodName,
-                    isDarkMode ? styles.darkText : styles.lightText,
-                  ]}
-                >
-                  {food.name}
-                </Text>
-                <Text style={isDarkMode ? styles.darkText : styles.lightText}>
-                  {food.calories} calories | {food.protein}g protein
-                </Text>
-              </View>
-
-              <Button title="Add" onPress={() => onAddFood(food)} />
-              <Button
-                title="Delete"
-                onPress={() => onDeleteFood(food.id)}
-                color="red"
-              />
+      <>
+        {filteredFoods.map((food) => (
+          <View
+            style={[
+              styles.foodItem,
+              isDarkMode ? styles.darkCard : styles.lightCard,
+            ]}
+            key={food.id}
+          >
+            <View style={styles.foodInfo}>
+              <Text
+                style={[
+                  styles.foodName,
+                  isDarkMode ? styles.darkText : styles.lightText,
+                ]}
+              >
+                {food.name}
+              </Text>
+              <Text style={isDarkMode ? styles.darkText : styles.lightText}>
+                {food.calories} calories | {food.protein}g protein
+              </Text>
             </View>
-          ))}
 
-          {filteredFoods.length === 0 && (
-            <Text style={isDarkMode ? styles.darkText : styles.lightText}>
-              No foods found. Try another search.
-            </Text>
-          )}
-        </>
-      )}
+            <Button title="Add" onPress={() => onAddFood(food)} />
+            <Button
+              title="Delete"
+              onPress={() => onDeleteFood(food.id)}
+              color="red"
+            />
+          </View>
+        ))}
+
+        {filteredFoods.length === 0 && (
+          <Text style={isDarkMode ? styles.darkText : styles.lightText}>
+            No foods found. Try another search.
+          </Text>
+        )}
+      </>
     </View>
   );
 }

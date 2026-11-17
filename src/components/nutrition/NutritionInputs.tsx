@@ -63,6 +63,7 @@ export default function NutritionInputs({
     }
     if (Number(protein) < 0) {
       setError("Please enter a non-negative number");
+      return;
     }
 
     setError("");
