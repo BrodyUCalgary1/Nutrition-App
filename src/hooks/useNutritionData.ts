@@ -2,10 +2,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Crypto from "expo-crypto";
 import { useEffect, useState } from "react";
 import type {
-    DailyFoods,
-    NutritionEntry,
-    NutritionGoal,
-    SavedFood,
+  DailyFoods,
+  NutritionEntry,
+  NutritionGoal,
+  SavedFood,
 } from "../types/nutrition";
 
 export function useNutritionData() {
@@ -86,11 +86,6 @@ export function useNutritionData() {
   function saveFoodToLibrary(food: Omit<SavedFood, "id">) {
     setSavedFoods((currentFoods) => {
       const alreadySaved = currentFoods.some((saved) => {
-        // Scanned foods are matched by barcode
-        if (food.barcode) {
-          return saved.barcode === food.barcode;
-        }
-
         // Manual foods are matched by name and nutrition values
         return (
           saved.name.trim().toLowerCase() === food.name.trim().toLowerCase() &&

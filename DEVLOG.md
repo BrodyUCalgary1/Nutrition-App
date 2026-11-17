@@ -149,3 +149,19 @@
 _sidenote_
 
 - this project is growing into something much bigger than I had anticipated. Im learning so much more than I ever would just looking at a textbook. Getting my hands _dirty_ helps me understand so much more about the effort and requirements it takes to build an app.
+
+---
+
+### November 17th 2026
+
+**Created**
+
+- Universal Themes changed for colours
+- Nav bar is now properly themed
+- modal add screen implemeneted and now has correct functionality
+- each page has about 99% correct functionality, minor changes still needed
+- **Learned**
+
+- learned about how the parent child stack works in app-tabs
+- understanding how the nutirition data is sent to each child and that each tab is seperate
+- understanding more about modal screens and how it is seperate from the tabs
