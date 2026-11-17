@@ -7,7 +7,7 @@ import {
   View,
   useColorScheme,
 } from "react-native";
-import type { NutritionEntry } from "../types/nutrition";
+import type { NutritionEntry } from "../../types/nutrition";
 
 // Define the component's properties
 type Props = {

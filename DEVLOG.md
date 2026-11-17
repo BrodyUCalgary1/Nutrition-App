@@ -124,3 +124,28 @@
 
 - Learning more about what it means to cache data and how to approach it.
 - understanding how parent child functions work, for example saveScannedFood is passed through three files before being used.
+
+---
+
+### November 16th 2026
+
+**Created**
+
+- Barcode products are integrated into the global library
+- food data is now widely spread out instead of all being inside of index
+  - new hook for most of the nutrition data
+  - new global context for the foods and addfood that allow all pages to call from the same object
+  - moved all of the other files into components/nutritition to make things neater
+- Created the Nav bar that includes TODAY LIBRARY GOALs and an add button
+- Today only includes the manual entry, barcode scanner and results for the day
+- Library includes global library
+- **Learned**
+
+- Claude is better than chat gpt
+- understanding more about hooks, still quite shallow knowledge
+- learnt about what each folder is resonsible for and moved the files accordingly
+- understanding tabs with expo a little bit more, once again still a little basic but starting to grasp the concept now
+
+_sidenote_
+
+- this project is growing into something much bigger than I had anticipated. Im learning so much more than I ever would just looking at a textbook. Getting my hands _dirty_ helps me understand so much more about the effort and requirements it takes to build an app.

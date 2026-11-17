@@ -12,7 +12,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import type { NutritionEntry, SavedFood } from "../types/nutrition";
+import type { NutritionEntry, SavedFood } from "../../types/nutrition";
 import { calculateServingNutrition } from "./NutritionUtils";
 import { lookupProduct, type ProductData } from "./ProductLookup";
 import ProductReview from "./ProductReview";

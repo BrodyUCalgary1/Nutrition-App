@@ -1,5 +1,5 @@
 import { Button, StyleSheet, Text, TextInput, View } from "react-native";
-import { SavedFood } from "../types/nutrition";
+import { SavedFood } from "../../types/nutrition";
 
 type FoodLibraryProps = {
   filteredFoods: SavedFood[];

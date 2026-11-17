@@ -1,3 +1,12 @@
+import BarcodeScanner from "@/components/nutrition/BarcodeScanner";
+import DailyFoodList from "@/components/nutrition/DailyFoodsList";
+import {
+  calculateCaloriePercentage,
+  calculateProteinPercentage,
+  calculateRemainingCalories,
+  calculateRemainingProtein,
+  getLocalDateString,
+} from "@/components/nutrition/NutritionUtils";
 import { useEffect, useState } from "react";
 import {
   Button,
@@ -7,47 +16,24 @@ import {
   View,
   useColorScheme,
 } from "react-native";
-import { useNutritionData } from "../hooks/useNutritionData";
-import BarcodeScanner from "./BarcodeScanner";
-import DailyFoodList from "./DailyFoodsList";
-import DateNavigation from "./DateNavigation";
-import FoodLibrary from "./FoodLibrary";
-import NutritionGoals from "./NutritionGoals";
-import NutritionInputs from "./NutritionInputs";
-import NutritionSummary from "./NutritionSummary";
-import {
-  calculateCaloriePercentage,
-  calculateProteinPercentage,
-  calculateRemainingCalories,
-  calculateRemainingProtein,
-} from "./NutritionUtils";
-
-function getLocalDateString(date: Date = new Date()): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-
-  return `${year}-${month}-${day}`;
-}
+import DateNavigation from "../../components/nutrition/DateNavigation";
+import NutritionInputs from "../../components/nutrition/NutritionInputs";
+import NutritionSummary from "../../components/nutrition/NutritionSummary";
+import { useNutrition } from "../../context/NutritionContext";
 
 export default function HomeScreen() {
   // Store the information received from NutritionInputs
   const {
     goals,
-    saveGoals,
     foods,
-    savedFoods,
     isLoaded,
     addFood,
     deleteFood,
     editFood,
     saveFoodToLibrary,
-    deleteSavedFood,
-  } = useNutritionData();
+  } = useNutrition();
   const [editingId, setEditingId] = useState<string | null>(null); //index for the food we want to edit
-  const [searchQuery, setSearchQuery] = useState(""); //saving whats in the search bar for saved foods
   const [selectedDate, setSelectedDate] = useState(""); //select which day it is and see what you entered
-  const [isSearchFocused, setIsSearchFocused] = useState(false); //search focus for the search bar
   const [isScannerOpen, setIsScannerOpen] = useState(false); //tracks if the scanner is open or not
 
   useEffect(() => {
@@ -91,10 +77,6 @@ export default function HomeScreen() {
     ? calculateProteinPercentage(goals.proteinGoal, totalProteins)
     : 0;
 
-  const filteredFoods = savedFoods.filter((food) =>
-    food.name.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
-
   const colorScheme = useColorScheme();
   const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -120,7 +102,10 @@ export default function HomeScreen() {
       onSaveFood={saveFoodToLibrary}
     />
   ) : (
-    <ScrollView style={containerStyle} contentContainerStyle={{ flexGrow: 1 }}>
+    <ScrollView
+      style={containerStyle}
+      contentContainerStyle={{ flexGrow: 1, paddingBottom: 120 }}
+    >
       <View>
         <Text style={titleStyle}>My Nutrition App</Text>
 
@@ -139,24 +124,6 @@ export default function HomeScreen() {
         />
 
         <Button title="Scan Barcode" onPress={() => setIsScannerOpen(true)} />
-
-        <FoodLibrary
-          filteredFoods={filteredFoods}
-          searchQuery={searchQuery}
-          isSearchFocused={isSearchFocused}
-          isDarkMode={isDarkMode}
-          onSearchChange={setSearchQuery}
-          onSearchFocus={() => setIsSearchFocused(true)}
-          onSearchBlur={() => {
-            setTimeout(() => {
-              setIsSearchFocused(false);
-            }, 200);
-          }}
-          onAddFood={(food) => addFood(food, getLocalDateString())}
-          onDeleteFood={deleteSavedFood}
-        />
-
-        <NutritionGoals onSave={saveGoals} />
 
         {/*Display Todays Date and Navigate*/}
         <DateNavigation

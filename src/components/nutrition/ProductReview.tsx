@@ -1,5 +1,5 @@
 import { Button, StyleSheet, Text, TextInput, View } from "react-native";
-import type { NutritionEntry, SavedFood } from "../types/nutrition";
+import type { NutritionEntry, SavedFood } from "../../types/nutrition";
 import type { ServingNutrition } from "./NutritionUtils";
 import type { ProductData } from "./ProductLookup";
 
