@@ -160,6 +160,7 @@ _sidenote_
 - Nav bar is now properly themed
 - modal add screen implemeneted and now has correct functionality
 - each page has about 99% correct functionality, minor changes still needed
+- removed the check for barcode matching in saved foods, incase the serving amount is different
 - **Learned**
 
 - learned about how the parent child stack works in app-tabs
