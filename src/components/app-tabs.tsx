@@ -9,20 +9,39 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 type TabButtonProps = ComponentProps<typeof Pressable> & {
   label: string;
   icon: keyof typeof Ionicons.glyphMap;
+  iconColor: string;
+  labelColor: string;
+  softColor: string;
   isFocused?: boolean;
 };
 
-function TabButton({ label, icon, isFocused, ...props }: TabButtonProps) {
+function TabButton({
+  label,
+  icon,
+  iconColor,
+  labelColor,
+  softColor,
+  isFocused,
+  ...props
+}: TabButtonProps) {
   const theme = useTheme();
-  const color = isFocused ? theme.primaryText : theme.textSecondary;
 
   return (
     <Pressable
       {...props}
-      style={[styles.tab, isFocused && { backgroundColor: theme.primarySoft }]}
+      accessibilityRole="tab"
+      accessibilityState={{ selected: !!isFocused }}
+      style={[styles.tab, isFocused && { backgroundColor: softColor }]}
     >
-      <Ionicons name={icon} size={22} color={color} />
-      <Text style={[styles.label, { color }]}>{label}</Text>
+      <Ionicons name={icon} size={22} color={iconColor} />
+      <Text
+        style={[
+          styles.label,
+          { color: isFocused ? labelColor : theme.textSecondary },
+        ]}
+      >
+        {label}
+      </Text>
     </Pressable>
   );
 }
@@ -40,18 +59,35 @@ export default function AppTabs() {
           {
             bottom: insets.bottom + 12,
             backgroundColor: theme.card,
-            shadowColor: theme.primary,
           },
         ]}
       >
         <TabTrigger name="index" href="/" asChild>
-          <TabButton label="Today" icon="home-outline" />
+          <TabButton
+            label="Today"
+            icon="home-outline"
+            iconColor={theme.tabToday}
+            labelColor={theme.tabTodayText}
+            softColor={theme.tabTodaySoft}
+          />
         </TabTrigger>
         <TabTrigger name="library" href="/library" asChild>
-          <TabButton label="Library" icon="bookmark-outline" />
+          <TabButton
+            label="Library"
+            icon="bookmark-outline"
+            iconColor={theme.tabLibrary}
+            labelColor={theme.tabLibraryText}
+            softColor={theme.tabLibrarySoft}
+          />
         </TabTrigger>
         <TabTrigger name="goals" href="/goals" asChild>
-          <TabButton label="Goals" icon="locate-outline" />
+          <TabButton
+            label="Goals"
+            icon="locate-outline"
+            iconColor={theme.tabGoals}
+            labelColor={theme.tabGoalsText}
+            softColor={theme.tabGoalsSoft}
+          />
         </TabTrigger>
       </TabList>
 
@@ -64,7 +100,6 @@ export default function AppTabs() {
           {
             bottom: insets.bottom + 12,
             backgroundColor: theme.primary,
-            shadowColor: theme.primary,
           },
         ]}
       >
@@ -84,10 +119,11 @@ const styles = StyleSheet.create({
     gap: 4,
     flexDirection: "row",
     borderRadius: 32,
-    shadowOpacity: 0.18,
-    shadowRadius: 24,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 8,
+    shadowColor: "#000000",
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 6,
   },
   tab: {
     flex: 1,
@@ -108,9 +144,10 @@ const styles = StyleSheet.create({
     borderRadius: 32,
     alignItems: "center",
     justifyContent: "center",
-    shadowOpacity: 0.35,
-    shadowRadius: 24,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 8,
+    shadowColor: "#000000",
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 6,
   },
 });

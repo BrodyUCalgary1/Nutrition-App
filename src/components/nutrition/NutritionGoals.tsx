@@ -1,12 +1,6 @@
-import { useEffect, useState } from "react";
-import {
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-  useColorScheme,
-} from "react-native";
+import { useTheme } from "@/hooks/use-theme";
+import { useState } from "react";
+import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import type { NutritionGoal } from "../../types/nutrition";
 
 // Define the component's properties
@@ -16,13 +10,14 @@ type Props = {
 
 export default function NutritionGoals({ onSave }: Props) {
   // Store the user's inputs
-  const [calorieGoal, setCaloriesGoal] = useState("");
+  const [calorieGoal, setCalorieGoal] = useState("");
   const [proteinGoal, setProteinGoal] = useState("");
   const [error, setError] = useState("");
+  const theme = useTheme();
 
   // Send the collected information to the parent component
   function handleSubmit() {
-    if (calorieGoal.trim() == "" || proteinGoal.trim() == "") {
+    if (calorieGoal.trim() === "" || proteinGoal.trim() === "") {
       setError("Please fill in all fields.");
       return;
     }
@@ -30,11 +25,11 @@ export default function NutritionGoals({ onSave }: Props) {
       !Number.isFinite(Number(calorieGoal)) ||
       !Number.isFinite(Number(proteinGoal))
     ) {
-      setError("Please enter a number");
+      setError("Please enter a number.");
       return;
     }
     if (Number(calorieGoal) <= 0 || Number(proteinGoal) <= 0) {
-      setError("Please enter non-negative numbers and non-Zero");
+      setError("Goals must be greater than 0.");
       return;
     }
 
@@ -45,43 +40,59 @@ export default function NutritionGoals({ onSave }: Props) {
       proteinGoal: Number(proteinGoal),
     });
 
-    setCaloriesGoal("");
+    setCalorieGoal("");
     setProteinGoal("");
   }
-  const colorScheme = useColorScheme();
-  const [isDarkMode, setIsDarkMode] = useState(false);
 
-  useEffect(() => {
-    setIsDarkMode(colorScheme === "dark");
-  }, [colorScheme]);
-
-  const headingStyle = isDarkMode ? styles.darkHeading : styles.lightHeading;
-  const inputStyle = isDarkMode ? styles.darkInput : styles.lightInput;
+  const inputStyle = [
+    styles.input,
+    {
+      backgroundColor: theme.card,
+      borderColor: theme.border,
+      color: theme.text,
+    },
+  ];
 
   return (
     <View style={styles.container}>
-      <Text style={headingStyle}>Nutrition Goals</Text>
+      <View style={[styles.card, { backgroundColor: theme.card }]}>
+        <View>
+          <Text style={[styles.label, { color: theme.textSecondary }]}>
+            Calorie goal (kcal)
+          </Text>
+          <TextInput
+            style={inputStyle}
+            placeholder="e.g. 2200"
+            placeholderTextColor={theme.textSecondary}
+            keyboardType="decimal-pad"
+            value={calorieGoal}
+            onChangeText={setCalorieGoal}
+          />
+        </View>
 
-      <TextInput
-        style={inputStyle}
-        placeholder="Calorie Goal"
-        keyboardType="numeric"
-        value={calorieGoal}
-        onChangeText={setCaloriesGoal}
-      />
+        <View>
+          <Text style={[styles.label, { color: theme.textSecondary }]}>
+            Protein goal (g)
+          </Text>
+          <TextInput
+            style={inputStyle}
+            placeholder="e.g. 140"
+            placeholderTextColor={theme.textSecondary}
+            keyboardType="decimal-pad"
+            value={proteinGoal}
+            onChangeText={setProteinGoal}
+          />
+        </View>
 
-      <TextInput
-        style={inputStyle}
-        placeholder="Protein Goal (g)"
-        keyboardType="numeric"
-        value={proteinGoal}
-        onChangeText={setProteinGoal}
-      />
+        {error !== "" && <Text style={{ color: theme.danger }}>{error}</Text>}
+      </View>
 
-      {error !== "" && <Text style={{ color: "red" }}>{error}</Text>}
-
-      <Pressable style={styles.button} onPress={handleSubmit}>
-        <Text style={styles.buttonText}>Save Information</Text>
+      <Pressable
+        accessibilityRole="button"
+        style={[styles.button, { backgroundColor: theme.primary }]}
+        onPress={handleSubmit}
+      >
+        <Text style={styles.buttonText}>Save goals</Text>
       </Pressable>
     </View>
   );
@@ -89,43 +100,41 @@ export default function NutritionGoals({ onSave }: Props) {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    gap: 14,
+  },
+  card: {
+    borderRadius: 20,
+    padding: 16,
     gap: 12,
+    shadowColor: "#000000",
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
   },
-  lightHeading: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginTop: 10,
+  label: {
+    fontSize: 12,
+    fontWeight: "600",
+    marginBottom: 6,
   },
-  darkHeading: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginTop: 10,
-    color: "white",
-  },
-  lightInput: {
-    borderWidth: 1,
-    borderColor: "#cccccc",
-    borderRadius: 8,
-    padding: 12,
+  input: {
+    height: 48,
+    borderWidth: 1.5,
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 0,
     fontSize: 16,
-  },
-  darkInput: {
-    borderWidth: 1,
-    borderColor: "#cccccc",
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-    color: "white",
+    fontWeight: "500",
   },
   button: {
-    backgroundColor: "#2563eb",
-    padding: 15,
-    borderRadius: 8,
+    height: 50,
+    borderRadius: 14,
     alignItems: "center",
+    justifyContent: "center",
   },
   buttonText: {
-    color: "white",
-    fontWeight: "bold",
+    color: "#ffffff",
+    fontSize: 16,
+    fontWeight: "600",
   },
 });

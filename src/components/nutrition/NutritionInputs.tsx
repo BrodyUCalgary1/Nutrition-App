@@ -1,12 +1,6 @@
+import { useTheme } from "@/hooks/use-theme";
 import { useEffect, useState } from "react";
-import {
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-  useColorScheme,
-} from "react-native";
+import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import type { NutritionEntry } from "../../types/nutrition";
 
 // Define the component's properties
@@ -58,11 +52,11 @@ export default function NutritionInputs({
       return;
     }
     if (Number(calories) <= 0) {
-      setError("Please enter non-negative numbers and non-Zero");
+      setError("Calories must be greater than 0.");
       return;
     }
     if (Number(protein) < 0) {
-      setError("Please enter a non-negative number");
+      setError("Protein can't be negative.");
       return;
     }
 
@@ -78,56 +72,94 @@ export default function NutritionInputs({
     setCalories("");
     setProtein("");
   }
-  const colorScheme = useColorScheme();
-  const [isDarkMode, setIsDarkMode] = useState(false);
 
-  useEffect(() => {
-    setIsDarkMode(colorScheme === "dark");
-  }, [colorScheme]);
+  const theme = useTheme();
 
-  const headingStyle = isDarkMode ? styles.darkHeading : styles.lightHeading;
-  const inputStyle = isDarkMode ? styles.darkInput : styles.lightInput;
+  const inputStyle = [
+    styles.input,
+    {
+      backgroundColor: theme.card,
+      borderColor: theme.border,
+      color: theme.text,
+    },
+  ];
 
   return (
     <View style={styles.container}>
-      <Text style={headingStyle}>
-        {initialData ? "Edit Food" : "Nutrition Information"}
-      </Text>
+      {initialData && (
+        <Text style={[styles.heading, { color: theme.text }]}>Edit food</Text>
+      )}
 
-      <TextInput
-        style={inputStyle}
-        placeholder="Food name"
-        value={name}
-        onChangeText={setName}
-      />
+      <View style={[styles.card, { backgroundColor: theme.card }]}>
+        <View>
+          <Text style={[styles.label, { color: theme.textSecondary }]}>
+            Food name
+          </Text>
+          <TextInput
+            style={inputStyle}
+            placeholder="e.g. Peanut butter toast"
+            placeholderTextColor={theme.textSecondary}
+            value={name}
+            onChangeText={setName}
+          />
+        </View>
 
-      <TextInput
-        style={inputStyle}
-        placeholder="Calories"
-        keyboardType="numeric"
-        value={calories}
-        onChangeText={setCalories}
-      />
+        <View style={styles.row}>
+          <View style={styles.field}>
+            <Text style={[styles.label, { color: theme.textSecondary }]}>
+              Calories
+            </Text>
+            <TextInput
+              style={inputStyle}
+              placeholder="0"
+              placeholderTextColor={theme.textSecondary}
+              keyboardType="decimal-pad"
+              value={calories}
+              onChangeText={setCalories}
+            />
+          </View>
 
-      <TextInput
-        style={inputStyle}
-        placeholder="Protein (g)"
-        keyboardType="numeric"
-        value={protein}
-        onChangeText={setProtein}
-      />
+          <View style={styles.field}>
+            <Text style={[styles.label, { color: theme.textSecondary }]}>
+              Protein (g)
+            </Text>
+            <TextInput
+              style={inputStyle}
+              placeholder="0"
+              placeholderTextColor={theme.textSecondary}
+              keyboardType="decimal-pad"
+              value={protein}
+              onChangeText={setProtein}
+            />
+          </View>
+        </View>
 
-      {error !== "" && <Text style={{ color: "red" }}>{error}</Text>}
+        {error !== "" && <Text style={{ color: theme.danger }}>{error}</Text>}
+      </View>
 
-      <Pressable style={styles.button} onPress={handleSubmit}>
+      <Pressable
+        accessibilityRole="button"
+        style={[styles.button, { backgroundColor: theme.primary }]}
+        onPress={handleSubmit}
+      >
         <Text style={styles.buttonText}>
-          {initialData ? "Update Foods" : "Save Information"}
+          {initialData ? "Update food" : "Save & log"}
         </Text>
       </Pressable>
 
       {initialData && (
-        <Pressable style={styles.button} onPress={onCancel}>
-          <Text style={styles.buttonText}>Cancel</Text>
+        <Pressable
+          accessibilityRole="button"
+          style={[
+            styles.button,
+            styles.outline,
+            { borderColor: theme.primary },
+          ]}
+          onPress={onCancel}
+        >
+          <Text style={[styles.buttonText, { color: theme.primaryText }]}>
+            Cancel
+          </Text>
         </Pressable>
       )}
     </View>
@@ -136,43 +168,55 @@ export default function NutritionInputs({
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    gap: 14,
+  },
+  heading: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  card: {
+    borderRadius: 20,
+    padding: 16,
+    gap: 12,
+    shadowColor: "#000000",
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
+  },
+  row: {
+    flexDirection: "row",
     gap: 12,
   },
-  lightHeading: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginTop: 10,
+  field: {
+    flex: 1,
   },
-  darkHeading: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginTop: 10,
-    color: "white",
+  label: {
+    fontSize: 12,
+    fontWeight: "600",
+    marginBottom: 6,
   },
-  lightInput: {
-    borderWidth: 1,
-    borderColor: "#cccccc",
-    borderRadius: 8,
-    padding: 12,
+  input: {
+    height: 48,
+    borderWidth: 1.5,
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 0,
     fontSize: 16,
-  },
-  darkInput: {
-    borderWidth: 1,
-    borderColor: "#cccccc",
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-    color: "white",
+    fontWeight: "500",
   },
   button: {
-    backgroundColor: "#2563eb",
-    padding: 15,
-    borderRadius: 8,
+    height: 50,
+    borderRadius: 14,
     alignItems: "center",
+    justifyContent: "center",
+  },
+  outline: {
+    borderWidth: 1.5,
   },
   buttonText: {
-    color: "white",
-    fontWeight: "bold",
+    color: "#ffffff",
+    fontSize: 16,
+    fontWeight: "600",
   },
 });
