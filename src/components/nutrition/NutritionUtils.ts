@@ -73,3 +73,13 @@ export function getLocalDateString(date: Date = new Date()): string {
 
   return `${year}-${month}-${day}`;
 }
+
+// Round a number and drop trailing zeros: 8.00 -> "8", 6.43 -> "6.4"
+export function formatNumber(
+  value: number | null,
+  decimals: number,
+): string | null {
+  if (value === null) return null;
+
+  return String(Number(value.toFixed(decimals)));
+}

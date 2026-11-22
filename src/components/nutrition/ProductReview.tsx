@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { NutritionEntry, SavedFood } from "../../types/nutrition";
-import type { ServingNutrition } from "./NutritionUtils";
+import { formatNumber, type ServingNutrition } from "./NutritionUtils";
 import type { ProductData } from "./ProductLookup";
 type ProductReviewProps = {
   product: ProductData;
@@ -20,13 +20,6 @@ type ProductReviewProps = {
   onAddFood: (food: NutritionEntry) => void;
   onSaveFood: (food: Omit<SavedFood, "id">) => void;
 };
-
-// Round a number and drop trailing zeros: 8.00 -> "8", 6.43 -> "6.4"
-function formatNumber(value: number | null, decimals: number): string | null {
-  if (value === null) return null;
-
-  return String(Number(value.toFixed(decimals)));
-}
 
 type StatTileProps = {
   label: string;
