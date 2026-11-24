@@ -86,10 +86,6 @@ export default function NutritionInputs({
 
   return (
     <View style={styles.container}>
-      {initialData && (
-        <Text style={[styles.heading, { color: theme.text }]}>Edit food</Text>
-      )}
-
       <View style={[styles.card, { backgroundColor: theme.card }]}>
         <View>
           <Text style={[styles.label, { color: theme.textSecondary }]}>
@@ -169,10 +165,6 @@ export default function NutritionInputs({
 const styles = StyleSheet.create({
   container: {
     gap: 14,
-  },
-  heading: {
-    fontSize: 20,
-    fontWeight: "bold",
   },
   card: {
     borderRadius: 20,

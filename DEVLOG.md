@@ -166,3 +166,13 @@ _sidenote_
 - learned about how the parent child stack works in app-tabs
 - understanding how the nutirition data is sent to each child and that each tab is seperate
 - understanding more about modal screens and how it is seperate from the tabs
+
+### November 19-23th 2026
+
+**Created**
+
+- Themed pages for every page is now done
+- **Learned**
+
+- not a lot was learnt the last 4 days since i dontl ike styling too much so i left most of it to ai without checking much of what it is doing
+- learnt a little about how router expo works

@@ -1,6 +1,5 @@
 import DailyFoodList from "@/components/nutrition/DailyFoodsList";
 import DateNavigation from "@/components/nutrition/DateNavigation";
-import NutritionInputs from "@/components/nutrition/NutritionInputs";
 import NutritionSummary from "@/components/nutrition/NutritionSummary";
 import {
   calculateCaloriePercentage,
@@ -10,12 +9,12 @@ import {
 } from "@/components/nutrition/NutritionUtils";
 import { useNutrition } from "@/context/NutritionContext";
 import { useTheme } from "@/hooks/use-theme";
+import { router } from "expo-router";
 import { useState } from "react";
 import { ScrollView, StyleSheet } from "react-native";
 
 export default function HomeScreen() {
-  const { goals, foods, deleteFood, editFood } = useNutrition();
-  const [editingId, setEditingId] = useState<string | null>(null); // the food being edited
+  const { goals, foods, deleteFood } = useNutrition();
   const [selectedDate, setSelectedDate] = useState(getLocalDateString()); // the day being viewed
   const theme = useTheme();
 
@@ -65,21 +64,10 @@ export default function HomeScreen() {
         onShiftWeek={shiftWeek}
       />
 
-      {editingId !== null && (
-        <NutritionInputs
-          initialData={foods.find((food) => food.id === editingId)}
-          onCancel={() => setEditingId(null)}
-          onSave={(data) => {
-            editFood(editingId, data);
-            setEditingId(null);
-          }}
-        />
-      )}
-
       <DailyFoodList
         foods={selectedDaysFoods}
         onDelete={deleteFood}
-        onEdit={setEditingId}
+        onEdit={(id) => router.push({ pathname: "/add-food", params: { id } })}
       />
 
       <NutritionSummary
