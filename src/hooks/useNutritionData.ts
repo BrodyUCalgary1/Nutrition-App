@@ -71,6 +71,22 @@ export function useNutritionData() {
     loadData();
   }, []); //load async data
 
+  useEffect(() => {
+    if (!isLoaded) return; // never save before the load has finished
+
+    async function saveData() {
+      try {
+        await AsyncStorage.setItem("foods", JSON.stringify(foods));
+        await AsyncStorage.setItem("goals", JSON.stringify(goals));
+        await AsyncStorage.setItem("savedFoods", JSON.stringify(savedFoods));
+      } catch (error) {
+        console.log("Error saving data:", error);
+      }
+    }
+
+    saveData();
+  }, [foods, goals, isLoaded, savedFoods]); //save async data
+
   function addFood(food: NutritionEntry, date: string) {
     setFoods((currentFoods) => [
       ...currentFoods,
