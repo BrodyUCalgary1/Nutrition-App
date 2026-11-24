@@ -1,6 +1,13 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Crypto from "expo-crypto";
 import { useEffect, useState } from "react";
+import {
+  isDailyFood,
+  isNutritionGoal,
+  isSavedFood,
+  loadList,
+  loadObject,
+} from "../lib/storage";
 import type {
   DailyFoods,
   NutritionEntry,
@@ -43,20 +50,26 @@ export function useNutritionData() {
   }, []); //load async data
 
   useEffect(() => {
-    if (!isLoaded) return; //another async function however, this runs everytime foods, goals or loaded changes
-
-    async function saveData() {
+    async function loadData() {
       try {
-        await AsyncStorage.setItem("foods", JSON.stringify(foods));
-        await AsyncStorage.setItem("goals", JSON.stringify(goals));
-        await AsyncStorage.setItem("savedFoods", JSON.stringify(savedFoods));
+        const loadedFoods = await loadList("foods", isDailyFood);
+        const loadedGoals = await loadObject("goals", isNutritionGoal);
+        const loadedSavedFoods = await loadList("savedFoods", isSavedFood);
+
+        setFoods(loadedFoods);
+        setGoals(loadedGoals);
+        setSavedFoods(loadedSavedFoods);
+
+        setIsLoaded(true);
       } catch (error) {
-        console.log("Error saving data:", error);
+        // Deliberately NOT marked as loaded: saving now could overwrite
+        // stored data that we simply failed to read
+        console.log("Error loading data:", error);
       }
     }
 
-    saveData();
-  }, [foods, goals, isLoaded, savedFoods]); //save async data
+    loadData();
+  }, []); //load async data
 
   function addFood(food: NutritionEntry, date: string) {
     setFoods((currentFoods) => [

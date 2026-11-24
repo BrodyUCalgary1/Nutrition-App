@@ -64,12 +64,6 @@ export default function HomeScreen() {
         onShiftWeek={shiftWeek}
       />
 
-      <DailyFoodList
-        foods={selectedDaysFoods}
-        onDelete={deleteFood}
-        onEdit={(id) => router.push({ pathname: "/add-food", params: { id } })}
-      />
-
       <NutritionSummary
         totalCalories={totalCalories}
         totalProtein={totalProteins}
@@ -77,6 +71,12 @@ export default function HomeScreen() {
         caloriePercentage={caloriePercentage}
         proteinPercentage={proteinPercentage}
         goals={goals}
+      />
+
+      <DailyFoodList
+        foods={selectedDaysFoods}
+        onDelete={deleteFood}
+        onEdit={(id) => router.push({ pathname: "/add-food", params: { id } })}
       />
     </ScrollView>
   );
