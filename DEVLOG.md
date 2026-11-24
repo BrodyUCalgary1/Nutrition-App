@@ -176,3 +176,15 @@ _sidenote_
 
 - not a lot was learnt the last 4 days since i dontl ike styling too much so i left most of it to ai without checking much of what it is doing
 - learnt a little about how router expo works
+
+### November 23 2026
+
+**Created**
+
+- data validation before loading app
+- cache expiry
+
+**Learned**
+
+- This project is starting to feel optional but im still grinding. Ai is taking a bigger seat since the last few changes ive shipped
+  arent too exciting to me for some reason. So im not learning too much right now.
