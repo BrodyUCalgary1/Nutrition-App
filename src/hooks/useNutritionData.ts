@@ -23,34 +23,6 @@ export function useNutritionData() {
 
   useEffect(() => {
     async function loadData() {
-      //async function to load data like food and goals
-      try {
-        const storedFoods = await AsyncStorage.getItem("foods");
-        const storedGoals = await AsyncStorage.getItem("goals");
-        const storedSavedFoods = await AsyncStorage.getItem("savedFoods");
-        if (storedSavedFoods !== null) {
-          setSavedFoods(JSON.parse(storedSavedFoods));
-        }
-
-        if (storedFoods !== null) {
-          setFoods(JSON.parse(storedFoods));
-        }
-
-        if (storedGoals !== null) {
-          setGoals(JSON.parse(storedGoals));
-        }
-      } catch (error) {
-        console.log("Error loading data:", error);
-      } finally {
-        setIsLoaded(true);
-      }
-    }
-
-    loadData();
-  }, []); //load async data
-
-  useEffect(() => {
-    async function loadData() {
       try {
         const loadedFoods = await loadList("foods", isDailyFood);
         const loadedGoals = await loadObject("goals", isNutritionGoal);
